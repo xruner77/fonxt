@@ -1,0 +1,168 @@
+.services-section {
+  position: relative;
+  z-index: 1;
+}
+
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--space-6);
+}
+
+.bento-card {
+  position: relative;
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all var(--transition-normal);
+}
+
+.bento-card:hover {
+  border-color: var(--card-accent, var(--border-light));
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.7), 0 0 30px -10px var(--card-accent, transparent);
+}
+
+/* Card Column Spans */
+.card-design {
+  grid-column: span 6;
+  --card-accent: rgba(249, 115, 22, 0.4);
+}
+
+.card-web {
+  grid-column: span 6;
+  --card-accent: rgba(37, 99, 235, 0.4);
+}
+
+.card-app {
+  grid-column: span 5;
+  --card-accent: rgba(0, 210, 255, 0.4);
+}
+
+.card-ai {
+  grid-column: span 7;
+  --card-accent: rgba(139, 92, 246, 0.4);
+}
+
+/* Internal Card Layout */
+.card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: var(--space-6);
+}
+
+.card-icon-wrapper {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-light);
+  color: #ffffff;
+}
+
+.card-tag {
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.card-body {
+  position: relative;
+  z-index: 1;
+}
+
+.card-title {
+  font-size: 1.45rem;
+  font-weight: 700;
+  margin-bottom: var(--space-2);
+}
+
+.card-desc {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-6);
+}
+
+.card-features {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+.card-features li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.88rem;
+  color: var(--text-primary);
+}
+
+.card-features li svg {
+  flex-shrink: 0;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.btn-card-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  transition: all var(--transition-fast);
+}
+
+.btn-card-action:hover {
+  gap: 10px;
+  color: var(--color-cyan);
+}
+
+/* Subtle Watermark Avatar on Card Background */
+.card-watermark-avatar {
+  position: absolute;
+  right: -20px;
+  bottom: -20px;
+  width: 170px;
+  height: 170px;
+  border-radius: 50%;
+  opacity: 0.12;
+  filter: blur(1px);
+  pointer-events: none;
+  transition: all var(--transition-slow);
+}
+
+.bento-card:hover .card-watermark-avatar {
+  opacity: 0.25;
+  transform: scale(1.08) rotate(3deg);
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .card-design, .card-web, .card-app, .card-ai {
+    grid-column: span 12;
+  }
+}
