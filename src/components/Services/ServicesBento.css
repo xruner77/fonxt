@@ -21,19 +21,20 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  box-shadow: var(--shadow-card);
   transition: all var(--transition-normal);
 }
 
 .bento-card:hover {
   border-color: var(--card-accent, var(--border-light));
   transform: translateY(-4px);
-  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.7), 0 0 30px -10px var(--card-accent, transparent);
+  box-shadow: var(--shadow-card-hover);
 }
 
 /* Card Column Spans */
 .card-design {
   grid-column: span 6;
-  --card-accent: rgba(249, 115, 22, 0.4);
+  --card-accent: rgba(234, 88, 12, 0.4);
 }
 
 .card-web {
@@ -43,12 +44,12 @@
 
 .card-app {
   grid-column: span 5;
-  --card-accent: rgba(0, 210, 255, 0.4);
+  --card-accent: rgba(2, 132, 199, 0.4);
 }
 
 .card-ai {
   grid-column: span 7;
-  --card-accent: rgba(139, 92, 246, 0.4);
+  --card-accent: rgba(124, 58, 237, 0.4);
 }
 
 /* Internal Card Layout */
@@ -66,9 +67,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.05);
+  background: #f8fafc;
   border: 1px solid var(--border-light);
-  color: #ffffff;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
 }
 
 .card-tag {
@@ -89,6 +90,7 @@
   font-size: 1.45rem;
   font-weight: 700;
   margin-bottom: var(--space-2);
+  color: var(--text-primary);
 }
 
 .card-desc {
@@ -141,7 +143,7 @@
   color: var(--color-cyan);
 }
 
-/* Subtle Watermark Avatar on Card Background */
+/* Subtle Watermark Avatar on Light Card Background */
 .card-watermark-avatar {
   position: absolute;
   right: -20px;
@@ -149,14 +151,14 @@
   width: 170px;
   height: 170px;
   border-radius: 50%;
-  opacity: 0.12;
+  opacity: 0.05;
   filter: blur(1px);
   pointer-events: none;
   transition: all var(--transition-slow);
 }
 
 .bento-card:hover .card-watermark-avatar {
-  opacity: 0.25;
+  opacity: 0.12;
   transform: scale(1.08) rotate(3deg);
 }
 

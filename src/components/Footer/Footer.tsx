@@ -34,7 +34,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenContact }) => {
         <div className="container footer-cta-inner">
           <div className="footer-brand-side">
             <img 
-              src="/logo.png" 
+              src="./logo.png" 
               alt="FONXT" 
               style={{ height: '40px', width: 'fit-content' }}
             />

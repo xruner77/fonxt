@@ -14,8 +14,8 @@ export const FAQ: React.FC = () => {
     <section id="faq" className="section faq-section">
       <div className="container">
         <div className="section-header">
-          <div className="section-tag">
-            <HelpCircle size={14} />
+          <div className="section-eyebrow">
+            <HelpCircle size={14} className="eyebrow-icon" />
             <span>FAQ · 常见问题解答</span>
           </div>
           <h2 className="section-title">解决你的每一个合作顾虑</h2>

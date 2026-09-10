@@ -1,5 +1,5 @@
 import React from 'react';
-import { Palette, Globe, Smartphone, Cpu, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Palette, Globe, Smartphone, Cpu, ArrowRight, CheckCircle2, Sparkles } from 'lucide-react';
 import './ServicesBento.css';
 
 interface ServicesBentoProps {
@@ -12,7 +12,8 @@ export const ServicesBento: React.FC<ServicesBentoProps> = ({ onOpenContact }) =
       <div className="container">
         {/* Section Header */}
         <div className="section-header">
-          <div className="section-tag">
+          <div className="section-eyebrow">
+            <Sparkles size={14} className="eyebrow-icon" />
             <span>MY SERVICES · 全栈服务矩阵</span>
           </div>
           <h2 className="section-title">我能为你做什么</h2>
@@ -32,10 +33,10 @@ export const ServicesBento: React.FC<ServicesBentoProps> = ({ onOpenContact }) =
               loading="lazy"
             />
             <div className="card-top">
-              <div className="card-icon-wrapper" style={{ borderColor: 'rgba(249, 115, 22, 0.4)' }}>
-                <Palette size={26} style={{ color: '#f97316' }} />
+              <div className="card-icon-wrapper" style={{ borderColor: 'rgba(234, 88, 12, 0.3)' }}>
+                <Palette size={26} style={{ color: '#ea580c' }} />
               </div>
-              <span className="card-tag" style={{ background: 'rgba(249, 115, 22, 0.1)', color: '#f97316' }}>
+              <span className="card-tag" style={{ background: 'rgba(234, 88, 12, 0.08)', color: '#ea580c' }}>
                 AI视觉与IP设计
               </span>
             </div>
@@ -48,15 +49,15 @@ export const ServicesBento: React.FC<ServicesBentoProps> = ({ onOpenContact }) =
 
               <ul className="card-features">
                 <li>
-                  <CheckCircle2 size={16} style={{ color: '#f97316' }} />
+                  <CheckCircle2 size={16} style={{ color: '#ea580c' }} />
                   <span>原创品牌吉祥物 & 3D萌系极客/盲盒风 IP 形象设定</span>
                 </li>
                 <li>
-                  <CheckCircle2 size={16} style={{ color: '#f97316' }} />
+                  <CheckCircle2 size={16} style={{ color: '#ea580c' }} />
                   <span>精准角色一致性三视图（正/侧/背）与业务表情包</span>
                 </li>
                 <li>
-                  <CheckCircle2 size={16} style={{ color: '#f97316' }} />
+                  <CheckCircle2 size={16} style={{ color: '#ea580c' }} />
                   <span>商业宣传海报、电商KV设计与高分辨率无损透明图交付</span>
                 </li>
               </ul>
@@ -79,10 +80,10 @@ export const ServicesBento: React.FC<ServicesBentoProps> = ({ onOpenContact }) =
               loading="lazy"
             />
             <div className="card-top">
-              <div className="card-icon-wrapper" style={{ borderColor: 'rgba(37, 99, 235, 0.4)' }}>
-                <Globe size={26} style={{ color: '#38bdf8' }} />
+              <div className="card-icon-wrapper" style={{ borderColor: 'rgba(37, 99, 235, 0.3)' }}>
+                <Globe size={26} style={{ color: '#2563eb' }} />
               </div>
-              <span className="card-tag" style={{ background: 'rgba(37, 99, 235, 0.1)', color: '#38bdf8' }}>
+              <span className="card-tag" style={{ background: 'rgba(37, 99, 235, 0.08)', color: '#2563eb' }}>
                 WEB ENGINEERING
               </span>
             </div>
@@ -95,15 +96,15 @@ export const ServicesBento: React.FC<ServicesBentoProps> = ({ onOpenContact }) =
 
               <ul className="card-features">
                 <li>
-                  <CheckCircle2 size={16} style={{ color: '#38bdf8' }} />
+                  <CheckCircle2 size={16} style={{ color: '#2563eb' }} />
                   <span>极具视觉冲击力的现代科技感官网与产品 Landing Page</span>
                 </li>
                 <li>
-                  <CheckCircle2 size={16} style={{ color: '#38bdf8' }} />
+                  <CheckCircle2 size={16} style={{ color: '#2563eb' }} />
                   <span>60fps 丝滑微动效，毫秒级首屏加载与无缝交互</span>
                 </li>
                 <li>
-                  <CheckCircle2 size={16} style={{ color: '#38bdf8' }} />
+                  <CheckCircle2 size={16} style={{ color: '#2563eb' }} />
                   <span>深度 SEO 优化配置与主流云平台（Cloudflare/云服务器）部署</span>
                 </li>
               </ul>
@@ -126,10 +127,10 @@ export const ServicesBento: React.FC<ServicesBentoProps> = ({ onOpenContact }) =
               loading="lazy"
             />
             <div className="card-top">
-              <div className="card-icon-wrapper" style={{ borderColor: 'rgba(0, 210, 255, 0.4)' }}>
-                <Smartphone size={26} style={{ color: '#00d2ff' }} />
+              <div className="card-icon-wrapper" style={{ borderColor: 'rgba(2, 132, 199, 0.3)' }}>
+                <Smartphone size={26} style={{ color: '#0284c7' }} />
               </div>
-              <span className="card-tag" style={{ background: 'rgba(0, 210, 255, 0.1)', color: '#00d2ff' }}>
+              <span className="card-tag" style={{ background: 'rgba(2, 132, 199, 0.08)', color: '#0284c7' }}>
                 MINI-APP & MOBILE
               </span>
             </div>
@@ -142,15 +143,15 @@ export const ServicesBento: React.FC<ServicesBentoProps> = ({ onOpenContact }) =
 
               <ul className="card-features">
                 <li>
-                  <CheckCircle2 size={16} style={{ color: '#00d2ff' }} />
+                  <CheckCircle2 size={16} style={{ color: '#0284c7' }} />
                   <span>微信原生高性能小程序（商城、预约、展示与工具）</span>
                 </li>
                 <li>
-                  <CheckCircle2 size={16} style={{ color: '#00d2ff' }} />
+                  <CheckCircle2 size={16} style={{ color: '#0284c7' }} />
                   <span>支持微信支付、授权登录、消息订阅等全套生态功能</span>
                 </li>
                 <li>
-                  <CheckCircle2 size={16} style={{ color: '#00d2ff' }} />
+                  <CheckCircle2 size={16} style={{ color: '#0284c7' }} />
                   <span>Flutter / React Native 跨平台移动端 App 原型与开发</span>
                 </li>
               </ul>
@@ -173,10 +174,10 @@ export const ServicesBento: React.FC<ServicesBentoProps> = ({ onOpenContact }) =
               loading="lazy"
             />
             <div className="card-top">
-              <div className="card-icon-wrapper" style={{ borderColor: 'rgba(139, 92, 246, 0.4)' }}>
-                <Cpu size={26} style={{ color: '#c084fc' }} />
+              <div className="card-icon-wrapper" style={{ borderColor: 'rgba(124, 58, 237, 0.3)' }}>
+                <Cpu size={26} style={{ color: '#7c3aed' }} />
               </div>
-              <span className="card-tag" style={{ background: 'rgba(139, 92, 246, 0.1)', color: '#c084fc' }}>
+              <span className="card-tag" style={{ background: 'rgba(124, 58, 237, 0.08)', color: '#7c3aed' }}>
                 AI ENTERPRISE & INFRA
               </span>
             </div>
@@ -189,19 +190,19 @@ export const ServicesBento: React.FC<ServicesBentoProps> = ({ onOpenContact }) =
 
               <ul className="card-features">
                 <li>
-                  <CheckCircle2 size={16} style={{ color: '#c084fc' }} />
+                  <CheckCircle2 size={16} style={{ color: '#7c3aed' }} />
                   <span><strong>企业级私有 RAG 知识库</strong>：切片清洗内部文档，精准问答零幻觉</span>
                 </li>
                 <li>
-                  <CheckCircle2 size={16} style={{ color: '#c084fc' }} />
+                  <CheckCircle2 size={16} style={{ color: '#7c3aed' }} />
                   <span><strong>7×24h 智能业务客服</strong>：自动接待咨询，智能挖掘高价值销售线索</span>
                 </li>
                 <li>
-                  <CheckCircle2 size={16} style={{ color: '#c084fc' }} />
+                  <CheckCircle2 size={16} style={{ color: '#7c3aed' }} />
                   <span><strong>Dify / LangChain 自动化工作流</strong>：打通企微、飞书与业务数据库</span>
                 </li>
                 <li>
-                  <CheckCircle2 size={16} style={{ color: '#c084fc' }} />
+                  <CheckCircle2 size={16} style={{ color: '#7c3aed' }} />
                   <span><strong>DeepSeek / 开源大模型私有化部署</strong>：局域网物理离线运行，数据绝不外泄</span>
                 </li>
               </ul>

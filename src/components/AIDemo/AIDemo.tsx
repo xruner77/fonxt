@@ -174,8 +174,8 @@ export const AIDemo: React.FC<AIDemoProps> = ({ onOpenContact }) => {
       <div className="container">
         {/* Section Header */}
         <div className="section-header">
-          <div className="section-tag" style={{ borderColor: 'rgba(139, 92, 246, 0.4)', color: '#c084fc', background: 'rgba(139, 92, 246, 0.1)' }}>
-            <Sparkles size={14} />
+          <div className="section-eyebrow">
+            <Sparkles size={14} className="eyebrow-icon" />
             <span>LIVE INTERACTION · 现场真实体验</span>
           </div>
           <h2 className="section-title">FONXT 智能业务助手</h2>

@@ -13,18 +13,19 @@
 .step-card {
   position: relative;
   border-radius: var(--radius-lg);
-  background: var(--bg-card);
+  background: #ffffff;
   border: 1px solid var(--border-subtle);
   padding: var(--space-6);
   display: flex;
   flex-direction: column;
+  box-shadow: var(--shadow-card);
   transition: all var(--transition-normal);
 }
 
 .step-card:hover {
   border-color: var(--color-cyan);
   transform: translateY(-4px);
-  box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.6);
+  box-shadow: var(--shadow-card-hover);
 }
 
 .step-number {

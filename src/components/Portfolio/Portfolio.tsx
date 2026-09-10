@@ -21,8 +21,8 @@ export const Portfolio: React.FC<PortfolioProps> = ({ onOpenContact }) => {
       <div className="container">
         {/* Section Header */}
         <div className="section-header">
-          <div className="section-tag">
-            <Sparkles size={14} />
+          <div className="section-eyebrow">
+            <Sparkles size={14} className="eyebrow-icon" />
             <span>FEATURED WORKS · 精选案例</span>
           </div>
           <h2 className="section-title">用实际作品，见证专业与创造力</h2>
@@ -32,18 +32,20 @@ export const Portfolio: React.FC<PortfolioProps> = ({ onOpenContact }) => {
         </div>
 
         {/* Category Filters */}
-        <div className="portfolio-filters" role="tablist" aria-label="案例分类筛选">
-          {caseCategories.map((cat) => (
-            <button
-              key={cat.id}
-              role="tab"
-              aria-selected={activeCategory === cat.id}
-              className={`filter-btn ${activeCategory === cat.id ? 'active' : ''}`}
-              onClick={() => setActiveCategory(cat.id)}
-            >
-              {cat.label}
-            </button>
-          ))}
+        <div className="portfolio-filter-container">
+          <div className="portfolio-filters" role="tablist" aria-label="案例分类筛选">
+            {caseCategories.map((cat) => (
+              <button
+                key={cat.id}
+                role="tab"
+                aria-selected={activeCategory === cat.id}
+                className={`filter-btn ${activeCategory === cat.id ? 'active' : ''}`}
+                onClick={() => setActiveCategory(cat.id)}
+              >
+                {cat.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Cases Grid */}

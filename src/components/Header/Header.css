@@ -6,16 +6,16 @@
   height: var(--nav-height);
   z-index: var(--z-nav);
   transition: all var(--transition-normal);
-  background: rgba(6, 9, 17, 0.7);
+  background: var(--bg-header);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border-subtle);
 }
 
 .site-header.scrolled {
-  background: rgba(6, 9, 17, 0.88);
-  border-bottom-color: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+  background: var(--bg-header-scrolled);
+  border-bottom-color: var(--border-light);
+  box-shadow: 0 4px 20px -5px rgba(15, 23, 42, 0.08);
 }
 
 .header-inner {
@@ -95,16 +95,17 @@
   gap: var(--space-2);
   padding: 8px 16px;
   border-radius: var(--radius-full);
-  background: rgba(255, 255, 255, 0.05);
+  background: #ffffff;
   border: 1px solid var(--border-light);
   color: var(--text-primary);
   font-size: 0.88rem;
   font-weight: 500;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
   transition: all var(--transition-fast);
 }
 
 .btn-header-wechat:hover {
-  background: rgba(0, 210, 255, 0.12);
+  background: rgba(2, 132, 199, 0.08);
   border-color: var(--color-cyan);
   color: var(--color-cyan);
 }
@@ -119,13 +120,13 @@
   color: #ffffff;
   font-size: 0.88rem;
   font-weight: 600;
-  box-shadow: 0 4px 15px -2px rgba(37, 99, 235, 0.4);
+  box-shadow: 0 4px 14px -2px rgba(37, 99, 235, 0.35);
   transition: all var(--transition-normal);
 }
 
 .btn-header-cta:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px -2px rgba(139, 92, 246, 0.5);
+  box-shadow: 0 6px 18px -2px rgba(124, 58, 237, 0.45);
 }
 
 /* Mobile Toggle */
@@ -137,12 +138,143 @@
   height: 40px;
   border-radius: var(--radius-md);
   color: var(--text-primary);
-  background: rgba(255, 255, 255, 0.05);
+  background: #ffffff;
+  border: 1px solid var(--border-light);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
 }
 
-/* Mobile Drawer Overlay */
+/* ==========================================================================
+   MOBILE DRAWER (PORTALED DIRECTLY TO BODY)
+   ========================================================================== */
+
 .mobile-drawer-overlay {
-  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: var(--z-modal);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-normal);
+}
+
+.mobile-drawer-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.mobile-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: min(320px, 85vw);
+  height: 100vh;
+  height: 100dvh;
+  background: #ffffff !important;
+  border-left: 1px solid var(--border-light);
+  box-shadow: -10px 0 40px rgba(15, 23, 42, 0.18);
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  transform: translateX(100%);
+  transition: transform var(--transition-normal);
+  z-index: calc(var(--z-modal) + 1);
+  overflow-y: auto;
+}
+
+.mobile-drawer-overlay.open .mobile-drawer {
+  transform: translateX(0);
+}
+
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.drawer-logo {
+  height: 32px;
+  width: auto;
+  object-fit: contain;
+}
+
+.btn-close-drawer {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f1f5f9;
+  color: var(--text-primary);
+  border: 1px solid var(--border-subtle);
+  transition: all var(--transition-fast);
+}
+
+.btn-close-drawer:hover {
+  background: #e2e8f0;
+  color: var(--color-cyan);
+}
+
+.drawer-nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.drawer-nav-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  font-size: 1.02rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: transparent;
+  transition: all var(--transition-fast);
+}
+
+.drawer-nav-link:hover {
+  background: #f8fafc;
+  color: var(--color-cyan);
+  padding-left: 18px;
+}
+
+.drawer-chevron {
+  color: var(--text-muted);
+  transition: transform var(--transition-fast);
+}
+
+.drawer-nav-link:hover .drawer-chevron {
+  color: var(--color-cyan);
+  transform: translateX(3px);
+}
+
+.drawer-actions {
+  margin-top: auto;
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.drawer-action-btn {
+  width: 100%;
+  justify-content: center;
+  padding: 13px;
+  font-size: 0.92rem;
 }
 
 @media (max-width: 992px) {
@@ -152,78 +284,5 @@
 
   .mobile-toggle {
     display: flex;
-  }
-
-  .mobile-drawer-overlay {
-    display: block;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(8px);
-    z-index: var(--z-modal);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity var(--transition-normal);
-  }
-
-  .mobile-drawer-overlay.open {
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  .mobile-drawer {
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 280px;
-    height: 100%;
-    background: var(--bg-secondary);
-    border-left: 1px solid var(--border-light);
-    padding: var(--space-6);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-6);
-    transform: translateX(100%);
-    transition: transform var(--transition-normal);
-    z-index: calc(var(--z-modal) + 1);
-  }
-
-  .mobile-drawer-overlay.open .mobile-drawer {
-    transform: translateX(0);
-  }
-
-  .drawer-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-bottom: var(--space-4);
-    border-bottom: 1px solid var(--border-subtle);
-  }
-
-  .drawer-nav {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
-  }
-
-  .drawer-nav-link {
-    font-size: 1.1rem;
-    font-weight: 500;
-    color: var(--text-secondary);
-    padding: var(--space-2) 0;
-  }
-
-  .drawer-nav-link:hover {
-    color: var(--color-cyan);
-  }
-
-  .drawer-actions {
-    margin-top: auto;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
   }
 }

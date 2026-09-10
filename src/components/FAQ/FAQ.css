@@ -13,16 +13,17 @@
 
 .faq-item {
   border-radius: var(--radius-lg);
-  background: var(--bg-card);
+  background: #ffffff;
   border: 1px solid var(--border-subtle);
   overflow: hidden;
+  box-shadow: var(--shadow-card);
   transition: all var(--transition-normal);
 }
 
 .faq-item.open {
-  border-color: var(--border-light);
-  background: var(--bg-card-hover);
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
+  border-color: rgba(37, 99, 235, 0.35);
+  background: #ffffff;
+  box-shadow: var(--shadow-card-hover);
 }
 
 .faq-question-btn {
@@ -49,8 +50,9 @@
   font-weight: 600;
   padding: 3px 10px;
   border-radius: var(--radius-full);
-  background: rgba(0, 210, 255, 0.1);
+  background: rgba(2, 132, 199, 0.08);
   color: var(--color-cyan);
+  border: 1px solid rgba(2, 132, 199, 0.2);
   white-space: nowrap;
 }
 

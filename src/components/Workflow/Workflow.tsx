@@ -34,8 +34,8 @@ export const Workflow: React.FC = () => {
     <section id="workflow" className="section workflow-section">
       <div className="container">
         <div className="section-header">
-          <div className="section-tag">
-            <Layers size={14} />
+          <div className="section-eyebrow">
+            <Layers size={14} className="eyebrow-icon" />
             <span>PROCESS & METHODOLOGY · 标准交付流程</span>
           </div>
           <h2 className="section-title">规范透明的 4 步交付闭环</h2>

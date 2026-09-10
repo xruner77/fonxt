@@ -1,34 +1,37 @@
 /* ==========================================================================
-   FONXT DESIGN TOKENS
-   Based on brand visual identity: Deep obsidian tech + electric cyan/purple/orange
+   FONXT DESIGN TOKENS - LIGHT TECH THEME
+   Inspired by Stripe / Linear / Apple / Vercel Modern Light Aesthetics
+   Vibrant Logo Accents: Sky Blue, Royal Blue, Violet Purple & Energetic Orange
    ========================================================================== */
 
 :root {
-  /* Color Palette - Backgrounds */
-  --bg-dark: #060911;
-  --bg-primary: #0a0e1a;
-  --bg-secondary: #0f172a;
-  --bg-card: rgba(15, 23, 42, 0.72);
-  --bg-card-hover: rgba(23, 34, 60, 0.85);
-  --bg-glass: rgba(255, 255, 255, 0.03);
-  --bg-input: rgba(15, 23, 42, 0.85);
+  /* Color Palette - Backgrounds (Clean, Layered Light Aesthetic) */
+  --bg-dark: #f8fafc;
+  --bg-primary: #ffffff;
+  --bg-secondary: #f1f5f9;
+  --bg-card: rgba(255, 255, 255, 0.92);
+  --bg-card-hover: #ffffff;
+  --bg-glass: rgba(15, 23, 42, 0.03);
+  --bg-input: #ffffff;
+  --bg-header: rgba(255, 255, 255, 0.85);
+  --bg-header-scrolled: rgba(255, 255, 255, 0.96);
 
-  /* Color Palette - Accents (Extracted from FONXT Logo) */
-  --color-cyan: #00d2ff;
-  --color-blue: #2563eb;
-  --color-blue-light: #38bdf8;
-  --color-purple: #8b5cf6;
-  --color-indigo: #6366f1;
-  --color-pink: #ec4899;
-  --color-orange: #f97316;
-  --color-success: #10b981;
+  /* Color Palette - Accents (High Contrast WCAG Calibrated on Light Canvas) */
+  --color-cyan: #0284c7;        /* Sky 600 - High legibility on light background */
+  --color-blue: #2563eb;        /* Royal Blue */
+  --color-blue-light: #0ea5e9;  /* Sky 500 */
+  --color-purple: #7c3aed;      /* Violet 600 */
+  --color-indigo: #4f46e5;      /* Indigo 600 */
+  --color-pink: #db2777;        /* Pink 600 */
+  --color-orange: #ea580c;      /* Orange 600 */
+  --color-success: #10b981;     /* Emerald 500 */
 
   /* Gradients */
-  --gradient-brand: linear-gradient(135deg, #00d2ff 0%, #2563eb 35%, #8b5cf6 70%, #f97316 100%);
-  --gradient-brand-subtle: linear-gradient(135deg, rgba(0, 210, 255, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%);
-  --gradient-text-primary: linear-gradient(180deg, #ffffff 20%, #cbd5e1 100%);
-  --gradient-text-accent: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
-  --gradient-border: linear-gradient(135deg, rgba(0, 210, 255, 0.3), rgba(139, 92, 246, 0.2), rgba(249, 115, 22, 0.2));
+  --gradient-brand: linear-gradient(135deg, #0284c7 0%, #2563eb 35%, #7c3aed 70%, #ea580c 100%);
+  --gradient-brand-subtle: linear-gradient(135deg, rgba(2, 132, 199, 0.08) 0%, rgba(124, 58, 237, 0.08) 100%);
+  --gradient-text-primary: linear-gradient(180deg, #0f172a 20%, #334155 100%);
+  --gradient-text-accent: linear-gradient(135deg, #0284c7 0%, #4f46e5 50%, #7c3aed 100%);
+  --gradient-border: linear-gradient(135deg, rgba(2, 132, 199, 0.3), rgba(124, 58, 237, 0.2), rgba(234, 88, 12, 0.2));
 
   /* Typography */
   --font-display: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -36,22 +39,23 @@
   --font-mono: 'JetBrains Mono', monospace;
 
   /* Text Colors */
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --text-inverse: #0f172a;
+  --text-primary: #0f172a;      /* Slate 900 */
+  --text-secondary: #475569;    /* Slate 600 */
+  --text-muted: #94a3b8;        /* Slate 400 */
+  --text-inverse: #ffffff;
 
   /* Borders & Dividers */
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-light: rgba(255, 255, 255, 0.14);
-  --border-accent: rgba(0, 210, 255, 0.35);
+  --border-subtle: rgba(15, 23, 42, 0.08);
+  --border-light: rgba(15, 23, 42, 0.12);
+  --border-accent: rgba(2, 132, 199, 0.35);
 
-  /* Shadows & Glows */
-  --glow-cyan: 0 0 35px -5px rgba(0, 210, 255, 0.35);
-  --glow-purple: 0 0 35px -5px rgba(139, 92, 246, 0.35);
-  --glow-brand: 0 10px 40px -10px rgba(37, 99, 235, 0.4);
-  --shadow-card: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
-  --shadow-modal: 0 25px 60px -15px rgba(0, 0, 0, 0.85);
+  /* Shadows & Ambient Glows (Soft, Multi-Layered Diffuse Shadows) */
+  --glow-cyan: 0 0 30px -5px rgba(2, 132, 199, 0.2);
+  --glow-purple: 0 0 30px -5px rgba(124, 58, 237, 0.2);
+  --glow-brand: 0 10px 30px -10px rgba(37, 99, 235, 0.3);
+  --shadow-card: 0 10px 25px -5px rgba(15, 23, 42, 0.05), 0 4px 6px -2px rgba(15, 23, 42, 0.02);
+  --shadow-card-hover: 0 20px 35px -10px rgba(15, 23, 42, 0.1), 0 8px 12px -4px rgba(15, 23, 42, 0.04);
+  --shadow-modal: 0 25px 50px -12px rgba(15, 23, 42, 0.2), 0 8px 16px -4px rgba(15, 23, 42, 0.06);
 
   /* Border Radius */
   --radius-sm: 8px;
@@ -74,7 +78,7 @@
   --space-20: 80px;
   --space-24: 96px;
 
-  /* Z-Index Hierarchy (Defensive Architecture) */
+  /* Z-Index Hierarchy */
   --z-base: 1;
   --z-sticky: 10;
   --z-nav: 50;
