@@ -6,9 +6,10 @@ import './Header.css';
 
 interface HeaderProps {
   onOpenContact: () => void;
+  onNavigate?: (href: string) => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onOpenContact }) => {
+export const Header: React.FC<HeaderProps> = ({ onOpenContact, onNavigate }) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -35,6 +36,10 @@ export const Header: React.FC<HeaderProps> = ({ onOpenContact }) => {
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
     setMobileMenuOpen(false);
+    if (onNavigate) {
+      onNavigate(href);
+      return;
+    }
     const targetElement = document.querySelector(href);
     if (targetElement) {
       targetElement.scrollIntoView({ behavior: 'smooth' });

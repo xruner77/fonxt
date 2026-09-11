@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
-import { casesData, caseCategories, CaseItem } from '../../config/cases';
-import { CaseModal } from './CaseModal';
+import { casesData, caseCategories } from '../../config/cases';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import './Portfolio.css';
 
 interface PortfolioProps {
   onOpenContact: () => void;
+  onSelectCase: (caseId: string) => void;
 }
 
-export const Portfolio: React.FC<PortfolioProps> = ({ onOpenContact }) => {
+export const Portfolio: React.FC<PortfolioProps> = ({ onOpenContact: _onOpenContact, onSelectCase }) => {
   const [activeCategory, setActiveCategory] = useState<string>('all');
-  const [selectedCase, setSelectedCase] = useState<CaseItem | null>(null);
 
   const filteredCases = activeCategory === 'all'
     ? casesData
@@ -54,7 +53,7 @@ export const Portfolio: React.FC<PortfolioProps> = ({ onOpenContact }) => {
             <div
               key={item.id}
               className="case-card"
-              onClick={() => setSelectedCase(item)}
+              onClick={() => onSelectCase(item.id)}
             >
               <div className="case-cover-wrap">
                 <img
@@ -90,13 +89,6 @@ export const Portfolio: React.FC<PortfolioProps> = ({ onOpenContact }) => {
           ))}
         </div>
       </div>
-
-      {/* Case Detail Modal */}
-      <CaseModal
-        item={selectedCase}
-        onClose={() => setSelectedCase(null)}
-        onOpenContact={onOpenContact}
-      />
     </section>
   );
 };

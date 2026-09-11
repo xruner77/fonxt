@@ -105,7 +105,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({
             <div className="qr-card-wrap">
               {/* Native img for long-press recognition in WeChat */}
               <img
-                src="/assets/personas/master.jpg"
+                src={siteConfig.wechatQrCode}
                 alt="FONXT 微信二维码"
                 className="qr-code-img"
               />

@@ -11,156 +11,216 @@
 
 .bento-card {
   position: relative;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   padding: var(--space-8);
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: #ffffff;
+  border: 1px solid rgba(226, 232, 240, 0.85);
   overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  box-shadow: var(--shadow-card);
+  box-shadow: 0 6px 24px -4px rgba(15, 23, 42, 0.04);
   transition: all var(--transition-normal);
 }
 
 .bento-card:hover {
-  border-color: var(--card-accent, var(--border-light));
+  border-color: var(--card-accent, rgba(2, 132, 199, 0.4));
   transform: translateY(-4px);
-  box-shadow: var(--shadow-card-hover);
+  box-shadow: 0 16px 36px -6px rgba(15, 23, 42, 0.08);
 }
 
-/* Card Column Spans */
+/* Card Column Spans & Theme Colors */
 .card-design {
   grid-column: span 6;
   --card-accent: rgba(234, 88, 12, 0.4);
+  --card-glow: rgba(234, 88, 12, 0.08);
+  --card-glow-hover: rgba(234, 88, 12, 0.16);
 }
 
 .card-web {
   grid-column: span 6;
   --card-accent: rgba(37, 99, 235, 0.4);
+  --card-glow: rgba(37, 99, 235, 0.08);
+  --card-glow-hover: rgba(37, 99, 235, 0.16);
 }
 
 .card-app {
-  grid-column: span 5;
+  grid-column: span 6;
   --card-accent: rgba(2, 132, 199, 0.4);
+  --card-glow: rgba(2, 132, 199, 0.08);
+  --card-glow-hover: rgba(2, 132, 199, 0.16);
 }
 
 .card-ai {
-  grid-column: span 7;
+  grid-column: span 6;
   --card-accent: rgba(124, 58, 237, 0.4);
+  --card-glow: rgba(124, 58, 237, 0.08);
+  --card-glow-hover: rgba(124, 58, 237, 0.16);
 }
 
-/* Internal Card Layout */
-.card-top {
+/* Subtle Corner Ambient Glow */
+.bento-card::after {
+  content: '';
+  position: absolute;
+  right: -50px;
+  bottom: -50px;
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--card-glow, rgba(37, 99, 235, 0.08)) 0%, transparent 70%);
+  filter: blur(20px);
+  pointer-events: none;
+  opacity: 0.8;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+  z-index: 0;
+}
+
+.bento-card:hover::after {
+  opacity: 1;
+  transform: scale(1.15);
+  background: radial-gradient(circle, var(--card-glow-hover, rgba(37, 99, 235, 0.16)) 0%, transparent 70%);
+}
+
+/* Card Header: Icon on left, Title & Description directly on right */
+.card-header {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: flex-start;
-  justify-content: space-between;
+  gap: var(--space-5);
   margin-bottom: var(--space-6);
 }
 
+/* PROMINENT, LUMINOUS ICON BADGE (升级放大 + 发光投影) */
 .card-icon-wrapper {
-  width: 52px;
-  height: 52px;
-  border-radius: var(--radius-md);
+  width: 68px;
+  height: 68px;
+  border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f8fafc;
-  border: 1px solid var(--border-light);
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+  flex-shrink: 0;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
 }
 
-.card-tag {
-  font-size: 0.78rem;
-  font-weight: 700;
-  padding: 4px 12px;
-  border-radius: var(--radius-full);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+.bento-card:hover .card-icon-wrapper {
+  transform: scale(1.08) rotate(-3deg);
 }
 
+/* 4 Theme Color Badges */
+.card-icon-wrapper.theme-orange {
+  background: linear-gradient(135deg, rgba(234, 88, 12, 0.14) 0%, rgba(251, 146, 60, 0.28) 100%);
+  border: 1.5px solid rgba(234, 88, 12, 0.32);
+  box-shadow: 0 10px 22px -4px rgba(234, 88, 12, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.9);
+  color: #ea580c;
+}
+
+.card-icon-wrapper.theme-blue {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.14) 0%, rgba(96, 165, 250, 0.28) 100%);
+  border: 1.5px solid rgba(37, 99, 235, 0.32);
+  box-shadow: 0 10px 22px -4px rgba(37, 99, 235, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.9);
+  color: #2563eb;
+}
+
+.card-icon-wrapper.theme-cyan {
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.14) 0%, rgba(56, 189, 248, 0.28) 100%);
+  border: 1.5px solid rgba(2, 132, 199, 0.32);
+  box-shadow: 0 10px 22px -4px rgba(2, 132, 199, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.9);
+  color: #0284c7;
+}
+
+.card-icon-wrapper.theme-purple {
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.14) 0%, rgba(192, 132, 252, 0.28) 100%);
+  border: 1.5px solid rgba(124, 58, 237, 0.32);
+  box-shadow: 0 10px 22px -4px rgba(124, 58, 237, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.9);
+  color: #7c3aed;
+}
+
+/* Header Text (Title & Description placed on right of icon) */
+.card-header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.card-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.01em;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.card-desc {
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: #475569;
+  margin: 0;
+}
+
+/* Card Body */
 .card-body {
   position: relative;
   z-index: 1;
 }
 
-.card-title {
-  font-size: 1.45rem;
-  font-weight: 700;
-  margin-bottom: var(--space-2);
-  color: var(--text-primary);
-}
-
-.card-desc {
-  font-size: 0.95rem;
-  line-height: 1.6;
-  color: var(--text-secondary);
-  margin-bottom: var(--space-6);
-}
-
+/* Crisp Feature List */
 .card-features {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: 10px;
   margin-bottom: var(--space-6);
 }
 
 .card-features li {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: 8px;
   font-size: 0.88rem;
-  color: var(--text-primary);
+  font-weight: 500;
+  color: #334155;
+  line-height: 1.45;
 }
 
-.card-features li svg {
+.feature-check {
   flex-shrink: 0;
 }
 
+.icon-orange { color: #ea580c; }
+.icon-blue { color: #2563eb; }
+.icon-cyan { color: #0284c7; }
+.icon-purple { color: #7c3aed; }
+
+/* Card Footer Action */
 .card-footer {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding-top: var(--space-4);
-  border-top: 1px solid var(--border-subtle);
+  border-top: 1px solid rgba(226, 232, 240, 0.8);
 }
 
 .btn-card-action {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.88rem;
-  font-weight: 600;
-  color: var(--text-primary);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #334155;
+  cursor: pointer;
   transition: all var(--transition-fast);
 }
 
-.btn-card-action:hover {
-  gap: 10px;
-  color: var(--color-cyan);
-}
-
-/* Subtle Watermark Avatar on Light Card Background */
-.card-watermark-avatar {
-  position: absolute;
-  right: -20px;
-  bottom: -20px;
-  width: 170px;
-  height: 170px;
-  border-radius: 50%;
-  opacity: 0.05;
-  filter: blur(1px);
-  pointer-events: none;
-  transition: all var(--transition-slow);
-}
-
-.bento-card:hover .card-watermark-avatar {
-  opacity: 0.12;
-  transform: scale(1.08) rotate(3deg);
-}
+.btn-action-orange:hover { color: #ea580c; gap: 10px; }
+.btn-action-blue:hover { color: #2563eb; gap: 10px; }
+.btn-action-cyan:hover { color: #0284c7; gap: 10px; }
+.btn-action-purple:hover { color: #7c3aed; gap: 10px; }
 
 /* Responsive */
 @media (max-width: 992px) {
@@ -168,3 +228,25 @@
     grid-column: span 12;
   }
 }
+
+@media (max-width: 640px) {
+  .bento-card {
+    padding: var(--space-6);
+  }
+
+  .card-header {
+    gap: var(--space-4);
+    margin-bottom: var(--space-5);
+  }
+
+  .card-icon-wrapper {
+    width: 58px;
+    height: 58px;
+    border-radius: 16px;
+  }
+
+  .card-title {
+    font-size: 1.18rem;
+  }
+}
+

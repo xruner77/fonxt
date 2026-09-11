@@ -6,9 +6,7 @@ import {
   Code2, 
   Cpu, 
   ArrowRight, 
-  Bot, 
-  Zap, 
-  CheckCircle 
+  Bot 
 } from 'lucide-react';
 import './Hero.css';
 
@@ -234,17 +232,6 @@ export const Hero: React.FC<HeroProps> = ({ onOpenContact }) => {
               className="stage-character-img"
               loading="eager"
             />
-
-            {/* Floating Badges */}
-            <div className="floating-badge badge-top-left">
-              <Zap size={16} />
-              <span>全栈闭环 · 60%提效</span>
-            </div>
-
-            <div className="floating-badge badge-bottom-right">
-              <CheckCircle size={16} />
-              <span>100% 商业源码交付</span>
-            </div>
           </div>
         </div>
       </div>
