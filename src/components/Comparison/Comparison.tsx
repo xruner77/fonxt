@@ -59,6 +59,13 @@ export const Comparison: React.FC = () => {
                   <span>不愿交付干净可读的源码，绑定高额按年维护费，客户失去掌控权。</span>
                 </div>
               </li>
+              <li className="comp-item">
+                <XCircle size={18} style={{ color: '#ef4444' }} />
+                <div className="comp-item-content">
+                  <strong>云资源门槛高、前期隐形支出大</strong>
+                  <span>必须由客户先行自购高价云服务器，未上线先产生数千元空跑成本，环境配置复杂。</span>
+                </div>
+              </li>
             </ul>
           </div>
 
@@ -101,6 +108,13 @@ export const Comparison: React.FC = () => {
                 <div className="comp-item-content">
                   <strong>100% 完整资产交付与质保</strong>
                   <span>交付全部 Git 源码、Figma 设计稿与模型配置，客户拥有 100% 自主知识产权。</span>
+                </div>
+              </li>
+              <li className="comp-item">
+                <CheckCircle2 size={18} style={{ color: '#10b981' }} />
+                <div className="comp-item-content">
+                  <strong>自备 4C24G 高性能云算力沙盒</strong>
+                  <span>自带 4核24G/200G 独立云节点，开发期免费提供测试预览与打样环境，轻量知识库即开即用，零门槛试错。</span>
                 </div>
               </li>
             </ul>

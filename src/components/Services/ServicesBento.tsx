@@ -89,7 +89,7 @@ export const ServicesBento: React.FC<ServicesBentoProps> = ({ onOpenContact }) =
                 </li>
                 <li>
                   <CheckCircle2 size={16} className="feature-check icon-blue" />
-                  <span>全端断点自适应（手机 / iPad / 4K大屏）</span>
+                  <span>自备 4C24G 云节点，免费提供开发期在线预览与托管沙盒</span>
                 </li>
               </ul>
             </div>
@@ -167,7 +167,7 @@ export const ServicesBento: React.FC<ServicesBentoProps> = ({ onOpenContact }) =
                 </li>
                 <li>
                   <CheckCircle2 size={16} className="feature-check icon-purple" />
-                  <span>DeepSeek / 开源大模型机房私有化离线部署</span>
+                  <span>DeepSeek / 开源大模型私有化部署（含云端 24G 内存快速打样）</span>
                 </li>
               </ul>
             </div>
