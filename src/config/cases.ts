@@ -22,6 +22,39 @@ export interface CaseScreenshots {
   mobileImages?: CaseScreenshotItem[];
 }
 
+export interface StoryCodeSnippet {
+  lang: string;
+  code: string;
+  note?: string;
+}
+
+export interface StoryChapter {
+  id: string;
+  badge: string;
+  title: string;
+  subtitle: string;
+  summary: string;
+  narrative: string[];
+  keyTakeaway?: string;
+  codeSnippet?: StoryCodeSnippet;
+}
+
+export interface TutorialStep {
+  stepNumber: string;
+  title: string;
+  desc: string;
+  command?: string;
+  commandLang?: string;
+  tip?: string;
+  warning?: string;
+}
+
+export interface HardwareSpecItem {
+  label: string;
+  value: string;
+  desc: string;
+}
+
 export interface CaseItem {
   id: string;
   title: string;
@@ -42,7 +75,13 @@ export interface CaseItem {
   visitUrl?: string;
   overview?: CaseOverview;
   designHighlights?: CaseHighlightItem[];
-  screenshots?: CaseScreenshots;
+    screenshots?: CaseScreenshots;
+
+  // 硬核极客开发案例与实战教程扩展（可选 + 完整向下兼容）
+  storyIntro?: string;
+  storyChapters?: StoryChapter[];
+  tutorialSteps?: TutorialStep[];
+  hardwareSpecs?: HardwareSpecItem[];
 }
 
 export const caseCategories = [
@@ -52,8 +91,264 @@ export const caseCategories = [
   { id: 'ai', label: '⚡ AI应用与私有化落地' },
 ] as const;
 
-export const casesData: CaseItem[] = [
-  {
+export const casesData: CaseItem[] = [    {
+    "id": "phicomm-t1-hack",
+    "title": "拯救沉睡神机：斐讯 T1 (S912) 底层逆向与 4K HDR 极客影院固化实战",
+    "category": "dev",
+    "categoryLabel": "底层逆向与固件调优",
+    "subtitle": "物理闪存微创补丁 · 晶晨 VPP 硬件直通 · 环回 ADB 幽灵提权 · 局域网全功能画质中枢",
+    "description": "深入 Linux 内核、Android MediaCodec 与晶晨芯片硬件视频管线，攻克明基 BenQ TK700 投影仪 1.02 固件 EDID 降级、Kodi 调参硬解暴毙与 Surface 视窗截断等底层硬伤。免刷机无损打造 4K 60Hz 10bit HDR 满屏极客家庭影院。",
+    "client": "极客自研开源项目",
+    "year": "2026",
+    "coverImage": "/assets/cases/case-embedded-s912.png",
+    "techStack": [
+      "C / C++",
+      "ARM64 汇编 / Capstone",
+      "Linux Kernel & eMMC",
+      "Ext4 物理块热补丁",
+      "MediaCodec / Seccomp",
+      "Amlogic VPP 硬件管线",
+      "Java Socket ADB 协议",
+      "RESTful API / Web UI"
+    ],
+    "highlights": [
+      "开机永久锁死 4K 60Hz 10bit HDR 输出（阻断 BenQ TK700 投影仪 EDID 降级）",
+      "物理闪存无损打入 Seccomp 热补丁，根治调参时 MediaCodec 硬解死机崩溃",
+      "0% 算力调用晶晨 VPP 硬件变焦，联动 Kodi 消除 2.35:1 宽银幕黑边",
+      "环回本地 ADB 协议获取 UID 2000，免 Root 弹窗与免刷机系统控制"
+    ],
+    "deliverables": [
+      "斐讯 T1 闪存固化与热补丁完整脚本集",
+      "T1ZoomHelper.apk (v3.0) 电视端画质自启微服务",
+      "PC 批处理工具 set_video_zoom.bat 与 lock_4k60hz_10bit.bat",
+      "完整的底层崩溃诊断与物理扇区计算逆向手记"
+    ],
+    "tags": [
+      "底层逆向",
+      "Android系统",
+      "硬件解码",
+      "物理闪存补丁",
+      "画质引擎",
+      "家庭影院"
+    ],
+    "projectTime": "2026.03",
+    "visitUrl": "局域网微服务 · GitHub 开源",
+    "overview": {
+      "narrative": "斐讯 T1 搭载晶晨 S912 八核 64 位芯片与 Mali-T820MP3 GPU，拥有出色的 4K 60Hz 10-bit HDR 硬件解码基因，曾是极客圈公认的“百元神机”。然而，当老旧硬件遇上现代家庭影院时，一系列光怪陆离的底层兼容难题接踵而至。\n\n在实际影音调校中，我们遭遇了三重暗坑：首先是显示设备的“开机色彩失忆症”——并非所有设备都有此问题，但在笔者手头的【明基 BenQ TK700 4K 投影仪】上，为了获得完整 3D 播放能力送修升级到官方 1.02 固件后，意外触发了 EDID 协议判定 Bug，导致每次开机都被强制降级为泛白发灰的 8bit；其次是软件层的“调参猝死症”——Kodi 默认播放 16:9 原盘硬件解码极其稳定，但在播放 2.35:1 宽银幕电影直接调整画面参数与变焦时，会瞬间触发 Android 沙箱处决硬解进程导致死机；最后是系统环境的严苛限制——纯官方原厂固件由于缺乏 root 权限根本无法下发底层指令，必须基于带有 Root 的官改固件底包（如原厂 1.6T57 底包制作的 DB1 官改版，root 密码 31183118）。\n\n面对只读文件系统与芯片驱动的重重封锁，本项目展开了一场手术刀式的底层逆向攻坚：改写 U-Boot ENV 闪存永久封印自动重协商、在物理 eMMC 扇区无损打入 Seccomp 补丁根治调参死机、直通晶晨 VPP 视频后处理器以 0% 算力实现满屏无损变焦，并利用本地环回 ADB 协议实现无需电脑的静默自启与手机 Web 实时遥控。",
+      "target": "终结 BenQ TK700 投影仪 EDID 降级、根治 Kodi 调参硬解死机、释放 2.35:1 宽银幕视野，免刷机打造极致稳定的 4K 60Hz 10bit 极客影院。",
+      "audience": "家庭影院与投影玩家、老旧硬件救赎极客、嵌入式 Linux / Android 底层逆向开发者。",
+      "format": "底层物理闪存热补丁 + 电视端自启 APK (v3.0) + 手机 Web 遥控中枢"
+    },
+    "designHighlights": [
+      {
+        "title": "根治开机色深失忆",
+        "desc": "穿透 BenQ TK700 升级 1.02 固件后的 EDID 降级迷局，修改 U-Boot ENV 闪存关闭自动重协商，永久焊死 4K 60Hz 10bit HDR。",
+        "iconType": "layout"
+      },
+      {
+        "title": "物理闪存扇区微创热补",
+        "desc": "利用数学算法精准定位 ext4 块 327225 与 eMMC 551481 扇区，859 字节无损补丁写入物理存储，根治 Kodi 调参硬解暴毙。",
+        "iconType": "visual"
+      },
+      {
+        "title": "芯片级 VPP 硬件满屏直通",
+        "desc": "突破 Android SurfaceView 负坐标视窗截断壁垒，直通晶晨 VPP 硬件后处理器，0% 算力开销消除 2.35:1 宽银幕黑边。",
+        "iconType": "responsive"
+      },
+      {
+        "title": "环回 ADB 幽灵提权自启",
+        "desc": "利用固件 5555 本地调试端口环回握手免授权获取 UID 2000，开机 1 秒静默自启，打造局域网手机实时画质遥控中枢。",
+        "iconType": "brand"
+      }
+    ],
+    "screenshots": {
+      "pcImage": "/assets/cases/case-embedded-s912.png",
+      "pcLabel": "4K 60Hz 10bit HDR 满屏播放与终端实时状态",
+      "mobileImages": [
+        {
+          "image": "/assets/cases/case-embedded-s912-mobile.png",
+          "label": "手机端局域网画质与变焦调优面板"
+        },
+        {
+          "image": "/assets/cases/case-embedded-s912.png",
+          "label": "晶晨芯片 VPP 硬件直通与无损输出"
+        }
+      ]
+    },
+    "hardwareSpecs": [
+      {
+        "label": "主控芯片",
+        "value": "Amlogic S912",
+        "desc": "八核 64 位 ARM Cortex-A53 @ 1.5GHz / Mali-T820MP3 GPU"
+      },
+      {
+        "label": "前置系统环境",
+        "value": "DB1 官改 Root 固件",
+        "desc": "基于 1.6T57 底包，内置 su (密码 31183118)，纯原厂无 Root 不可行"
+      },
+      {
+        "label": "物理闪存介质",
+        "value": "16GB eMMC 5.0",
+        "desc": "精准定位 ext4 块 327225 / 物理 551481 号 4KB 扇区微创热补"
+      },
+      {
+        "label": "视频硬件管线",
+        "value": "Amlogic VPP 协处理器",
+        "desc": "0% CPU 占用直通 /sys/class/video/zoom 影院变焦与 DNLP 去灰"
+      },
+      {
+        "label": "实测联动显示设备",
+        "value": "明基 BenQ TK700 4K",
+        "desc": "专治售后升级 1.02 固件 (完整 3D 版) 后的 EDID 8bit 降级 Bug"
+      }
+    ],
+    "storyIntro": "这是一场历时数周、充满戏剧性转折的软硬件底层逆向侦探录。在探索的起点，我们遇到了经典的老旧硬件救赎难题：明基 TK700 投影仪在升级 1.02 固件获得完整 3D 能力后出现的开机色彩失忆症、Kodi 动态调参时硬解进程的神秘猝死，以及只读系统下普通应用无法提权的铁壁。遵循真实客观的工程精神，我们穿透应用层表象，在闪存扇区与芯片寄存器间抽丝剥茧。以下是五幕环环相扣的极客攻坚纪实：",
+    "storyChapters": [
+      {
+        "id": "act-1",
+        "badge": "第一幕 · 侦破篇",
+        "title": "明基 BenQ TK700 的“开机健忘症”与 U-Boot 闪存固化",
+        "subtitle": "BenQ TK700 升级 1.02 固件后的 EDID 握手迷局：如何穿透只读文件系统，将 4K 10bit 焊死在底层物理闪存？",
+        "summary": "绝大多数显示设备协商正常，但在 BenQ TK700 升级 1.02 固件后，开机总被强退为灰暗的 8bit。通过反编译晶晨 systemcontrol 守护进程，找到控制自动重协商的总开关 is.bestmode，一键将 10bit 色深写入 U-Boot ENV 闪存。",
+        "narrative": [
+          "故事始于一场看似平常的家庭影院画质升级。笔者手头有一台明基 BenQ TK700 4K 投影仪，出厂搭载的 1.01 固件因缺少完整的 3D 播放能力，特意送去明基官方售后升级到了支持完整 3D 的 1.02 固件。然而，正是这版固件在与斐讯 T1 握手时埋下了一枚暗雷——普通电视与投影握手均属正常，但 TK700 升级后在每次冷开机或重新插拔 HDMI 时，T1 的显示模式都会被强行洗脑重置为泛白发灰、色阶断层的 444,8bit。",
+          "要驯服这台盒子，纯原厂官方固件是行不通的，因为没有内置 su 权限；我们选用了经过完整验证的 DB1 官改固件（基于原厂 1.6T57 底包，内置 su 密码 31183118）。即便有了 Root 权限，Android 的系统分区依然受只读保护，常规编写脚本向 /sys 节点写入参数，断电重启后依然会被无情冲刷得一干二净。",
+          "经过对晶晨核心显示守护进程 /system/bin/systemcontrol 的反编译逆向，我们终于揪出了关键元凶：ubootenv.var.is.bestmode！当它为 true 时，系统会盲信 EDID 的自动重协商结果。只要将其置为 false，显示引擎便会彻底关闭自动重协商，无条件读取保存在底层 U-Boot ENV 闪存中的物理参数。借助晶晨特权指令 dumpsys system_control -b set，我们将 4K 60Hz 420 10bit 一劳永逸地写入物理闪存。冷启动断电再开，420,10bit 坚如磐石，开机健忘症彻底绝迹！"
+        ],
+        "keyTakeaway": "不要在应用层的沙滩上修碉堡。找到底层状态机的控制总开关，直接向物理闪存下发既成事实。",
+        "codeSnippet": {
+          "lang": "bash",
+          "code": "dumpsys system_control -b set ubootenv.var.is.bestmode false\ndumpsys system_control -b set ubootenv.var.outputmode 2160p60hz420\ndumpsys system_control -b set ubootenv.var.hdmimode 2160p60hz420\ndumpsys system_control -b set ubootenv.var.colorattribute 420,10bit\ndumpsys system_control -b set ubootenv.var.2160p60hz420_deepcolor 420,10bit",
+          "note": "关闭自动重协商，在物理闪存 U-Boot ENV 中永久锁死 4K 60Hz 10-bit"
+        }
+      },
+      {
+        "id": "act-2",
+        "badge": "第二幕 · 惊魂篇",
+        "title": "死机惊魂！直接调整画面参数时的硬解离奇“自杀”",
+        "subtitle": "Kodi 原盘普通硬解原本稳定，为何在伸手调节画面视窗的一刹那，硬解管线会离奇崩溃死机？",
+        "summary": "常规 16:9 播放岁月静好，但一旦在播放中动态调整画面参数，驱动层就会尝试与 init 通信，而 Seccomp 过滤器因漏写 sendto 白名单直接触发 SIGSYS 致命信号处决硬解。",
+        "narrative": [
+          "攻克了开机 10bit 色深后，影院体验迎来了短暂的平静。在 Kodi 中载入 4K 10bit 蓝光原盘，原生的 MediaCodec (Surface) 硬件加速运行极其平稳，色彩通透，HDR 动态范围舒展。如果只是按部就班地看完一部常规 16:9 的片子，一切看起来都完美无瑕。",
+          "真正的危机发生在我们试图【直接调整画面参数】的那一刻。为了让 2.35:1 宽银幕电影更好地契合幕布，我们在播放菜单中调节画面缩放与视窗参数。就在新参数生效的瞬间，屏幕画面突然卡死定格，CPU 占用狂飙至 100%，系统随即抛出 OMX/mediaserver died，整个硬解管线轰然垮塌，甚至连遥控器都彻底失去响应。",
+          "带着抓捕真凶的决心，我们翻开了 Linux 内核留下的致命崩溃日志——/data/tombstones/tombstone_05。调用栈赫然写着：signal 31 (SIGSYS), code 1 (SYS_SECCOMP)！原来在动态调参初始化时，底层驱动 libOmxVideo.so 会调用 property_set 向系统 init 通信，而底层 libc 依赖 sendto 发送本地 UNIX domain socket。然而系统的安全沙箱配置 mediacodec-seccomp.policy 竟然漏掉了 sendto 的系统调用白名单！Linux 内核当场将其判定为越权入侵，以无上威严的 SIGSYS 信号，瞬间将硬解进程当场处决！"
+        ],
+        "keyTakeaway": "系统崩溃很少是玄学。Tombstone 里的那一行 SIGSYS，正是内核在忠实执行它所拿到的残缺法律。",
+        "codeSnippet": {
+          "lang": "text",
+          "code": "pid: 4011, name: media.codec\nsignal 31 (SIGSYS), code 1 (SYS_SECCOMP)\n#07 libc.so (sendto+16)\n#09 libc.so (__system_property_set+206)\n#10 libOmxVideo.so (OMX_GetHandle+176)",
+          "note": "Linux 内核 Tombstone 崩溃转储：Seccomp 沙箱无情处决硬解进程"
+        }
+      },
+      {
+        "id": "act-3",
+        "badge": "第三幕 · 手术篇",
+        "title": "给物理闪存做“微创心脏手术”——eMMC 扇区热补丁",
+        "subtitle": "只读文件系统无法挂载修改？用纯数学穿透 Ext4 文件系统，在 551481 物理扇区精准动刀！",
+        "summary": "编写 Python 计算器精准测算目标策略文件在 ext4 数据块 327225 与 eMMC 物理闪存 551481 扇区的位置，利用文件头注释区以 859B 严格等长无损写入 sendto: 1，彻底解除调参死机魔咒。",
+        "narrative": [
+          "找到了病灶，摆在面前的却是一堵高墙：由于 system 分区采用 ext4 只读镜像且无法通过 mount -o remount,rw 重新挂载，任何试图直接修改 /system/etc/seccomp_policy/ 的常规操作都会被系统无情拒绝。如果为此重新解包、修改固件、打包并全盘重刷，不仅耗时繁琐，更容易引入未知的稳定性隐患。",
+          "真正的极客从不被文件系统表象束缚。既然逻辑文件层不让动，我们就直接去物理存储层动微创手术！我们编写了自动化 Python 脚本，通过解析 ext4 的 SuperBlock、Block Group 描述符与 Inode 表，如同 GPS 卫星定位般精准算出了 mediacodec-seccomp.policy 的物理落点：它正静静躺在 system 分区的第 327225 号数据块上。",
+          "叠加 system 分区在整个 eMMC 芯片上的起始偏移（1794048 扇区），我们精确折算出了它在物理设备 /dev/block/mmcblk0 中的绝对位置：第 551481 号 4KB 扇区！为了绝不破坏文件系统的校验和与 Inode 结构，我们在原文件头部的无用注释区替换写入 sendto: 1，保持 859 字节等长无损，随后用 dd 笔直写入物理扇区并刷新内存缓存。修复后再进 Kodi 随意狂搓画面调参，MediaCodec 稳若泰山，调参死机魔咒彻底化解！"
+        ],
+        "keyTakeaway": "当操作系统的逻辑门向你关闭时，块设备的物理扇区永远向你敞开。保持尺寸与校验的一致，是微创手术的生命线。",
+        "codeSnippet": {
+          "lang": "bash",
+          "code": "dd if=/sdcard/block_327225_patched.bin of=/dev/block/mmcblk0 seek=551481 bs=4096 count=1 conv=notrunc\nsync && echo 3 > /proc/sys/vm/drop_caches",
+          "note": "向物理闪存 551481 号扇区精准灌入 859 字节微创修补块"
+        }
+      },
+      {
+        "id": "act-4",
+        "badge": "第四幕 · 破局篇",
+        "title": "击穿黑边结界！芯片 VPP 视频后处理器降维打击",
+        "subtitle": "软件视窗的死胡同：为何 Kodi 缩放一大于 1.0 就失灵？直通芯片硬件管线实现 0% 算力满屏！",
+        "summary": "Kodi Surface 硬解下画面放大超出视窗会导致负坐标，被 Android SurfaceFlinger 暴力裁剪。跳过应用层，直接控制晶晨芯片底层 VPP 视频后处理器节点，联动 Kodi JSON-RPC 释放全屏黑边。",
+        "narrative": [
+          "调参死机的暗雷排除了，下一个横亘在眼前的难题是宽银幕电影的上下黑边。在 16:9 的投影幕布上播放 2.35:1 比例的大片时，上下两条宽阔的黑边极其削弱沉浸感。我们尝试在 Kodi 的视频设置里将画面缩放调整为 125%，令人匪夷所思的现象出现了：画面可以随意缩小，但只要缩放比例大于 1.0，画面就纹丝不动！",
+          "这并非 Kodi 的代码缺陷，而是 Android 渲染架构的宿命限制。在 MediaCodec Surface 硬件直通模式下，解码帧由底层 SurfaceFlinger 统筹渲染。一旦画面放大，视频图层的坐标就会溢出到屏幕之外变成负坐标，SurfaceFlinger 会在图层合成时无情地将溢出区域全部截断！若退回软解，弱小的 CPU 又会在 4K 巨浪面前瞬间熔化。",
+          "解决困局的钥匙不在软件层，而在芯片硬件本身。晶晨 S912 内置了一颗极其强悍的专属协处理器——VPP（Video Post Processor 视频后处理器）。它坐落在解码引擎与 HDMI 发射芯片之间，拥有独立的硬件缩放与画质增强流水线。通过向内核节点 /sys/class/video/zoom 写入 125，并配合 Kodi 环回 9090 端口发送 JSON-RPC 展开底层视窗，我们以 0% 的 CPU 与 GPU 开销，让画面以丝滑无损的画质撑满了整个幕布！"
+        ],
+        "keyTakeaway": "在应用层绞尽脑汁的瓶颈，在芯片底层硬件工程师眼中往往只是一组早早预留好的寄存器。",
+        "codeSnippet": {
+          "lang": "bash",
+          "code": "echo 125 > /sys/class/video/zoom\necho '{\"jsonrpc\":\"2.0\",\"method\":\"Player.SetViewMode\",\"params\":{\"viewmode\":\"zoom\"},\"id\":1}' | nc 127.0.0.1 9090",
+          "note": "向晶晨 VPP 协处理器下发 125% 硬件变焦，并联动 Kodi 展开全屏视窗"
+        }
+      },
+      {
+        "id": "act-5",
+        "badge": "第五幕 · 飞升篇",
+        "title": "“无门之门”——环回本地 ADB 协议的幽灵提权",
+        "subtitle": "告别看电影开电脑敲命令的尴尬：如何在电视端打造开机静默自启、手机一键遥控的画质中枢？",
+        "summary": "官改固件内置 su 仅允许 UID 0 和 2000 执行，普通 App 无法提权。巧妙利用 5555 调试端口常开且免验证特性，自研 Java Socket 环回直通 ADB 秒获 shell 身份，打造出零弹窗、自启动的 T1ZoomHelper (v3.0)。",
+        "narrative": [
+          "一切底层能力都已齐备，但极客的产品思维要求我们必须完成从“实验验证”到“优雅日用”的最后闭环：我们绝不能容忍每次看电影前，都必须先打开电脑连上 ADB 敲几行命令。必须在电视盒子里运行一个常驻微服务，开机自启、静默监听，并提供手机遥控网页。",
+          "然而，官改固件的 su 二进制程序极其刁钻：它被硬编码只信任 UID 0 (root) 和 UID 2000 (shell)，普通第三方 Android 应用在调用时会被瞬间拦截；同时系统只读，无法强行植入 Magisk 或 SuperSU 管理器。这扇看似紧闭的大门，实际上留有一道无形的“后门”——固件默认开启了 5555 网络调试端口，且 ro.adb.secure=0（无需任何秘钥弹窗确认）！",
+          "我们在自研应用 T1ZoomHelper (v3.0) 中设计了一套惊艳的提权机制：应用启动时，直接在本地通过纯 Java Socket 环回连接 127.0.0.1:5555，自己作为 ADB 客户端向自己发起连接！瞬间便合法获得了 UID 2000（shell）的特权身份，随后顺理成章管道输入密码 31183118 调用 su 完成硬件控制。开机 1 秒内静默自启，电视屏幕无任何弹窗打扰；躺在沙发上拿起手机，扫码打开网页，无论是 125% 满屏变焦还是晶晨 DNLP 硬件画质增强，皆在指尖实时掌控。"
+        ],
+        "keyTakeaway": "真正的技术美学不仅在于攻克艰难的逆向关卡，更在于最后将繁杂的底层黑科技，封装成让普通人感受不到技术存在的极简体验。",
+        "codeSnippet": {
+          "lang": "java",
+          "code": "Socket socket = new Socket(\"127.0.0.1\", 5555);\n// 环回本地 ADB 协议握手秒获 UID 2000，管道灌入密码 31183118 调用 su\nadbChannel.exec(\"echo 31183118 | su 0 echo 125 > /sys/class/video/zoom\");",
+          "note": "纯 Java Socket 本地环回免 Root 提权核心控制逻辑"
+        }
+      }
+    ],
+    "tutorialSteps": [
+      {
+        "stepNumber": "00",
+        "title": "【核心前提】确认刷入带 Root 的官改固件",
+        "desc": "请务必在动手前确认系统环境：纯原厂官方固件由于没有内置 su 提权程序，系统处于完全锁定状态，是无法执行底层固化与寄存器控制的！必须刷入带有 Root 权限的固件。本教程经完整验证的推荐固件为：基于原厂 1.6T57 底包制作的【当贝/官改 Root 固件】（固件版本号：DB1_0000_7.1.2_1.6T57_0719_SH，内置 su 且 root 密码为 31183118，默认开启 5555 调试端口）。",
+        "tip": "进入盒子的【设置】->【关于本机】即可查看系统版本。若系统满足前置条件，继续往下走一路畅通无阻。"
+      },
+      {
+        "stepNumber": "01",
+        "title": "局域网连接与环境准备",
+        "desc": "将斐讯 T1 连上电视或投影仪（如明基 TK700）并接入家庭 Wi-Fi，在【设置】->【网络信息】中查看盒子分配到的局域网 IP（例如 192.168.123.98）。电脑端打开 PowerShell 并进入 ADB 工具目录，建立网络连接。",
+        "command": ".\\adb.exe connect 192.168.123.98:5555",
+        "commandLang": "powershell",
+        "tip": "若连接成功，终端将返回 connected to 192.168.123.98:5555。如遇连接超时，请确认电脑与盒子处于同一局域网网段。"
+      },
+      {
+        "stepNumber": "02",
+        "title": "PowerShell 一键固化物理闪存参数",
+        "desc": "针对明基 BenQ TK700 投影仪升级 1.02 固件后开机被 EDID 强制降级为 8bit 的 Bug，在电脑端 PowerShell 中执行以下命令。该命令会自动向底层 su 灌入密码 31183118，关闭 EDID 自动探测判定，并将 4K 60Hz 10bit 持久化刻入 U-Boot ENV 物理闪存。",
+        "command": "powershell -Command \"echo '31183118`ndumpsys system_control -b set ubootenv.var.is.bestmode false`ndumpsys system_control -b set ubootenv.var.outputmode 2160p60hz420`ndumpsys system_control -b set ubootenv.var.hdmimode 2160p60hz420`ndumpsys system_control -b set ubootenv.var.colorattribute 420,10bit`ndumpsys system_control -b set ubootenv.var.2160p60hz420_deepcolor 420,10bit`nstop system_control`nstart system_control`nexit' | .\\adb.exe shell su\"",
+        "commandLang": "powershell",
+        "tip": "指令执行后电视屏幕可能会短暂闪烁 1 秒，这是 system_control 显示守护进程热重启生效的正常物理反应。"
+      },
+      {
+        "stepNumber": "03",
+        "title": "冷重启并核验硬件闪存状态",
+        "desc": "执行重启命令，等待盒子彻底冷启动完成后，读取 HDMI 物理驱动节点与 eMMC 闪存 ENV 分区，确认 420,10bit 是否已在 BenQ TK700 上永久生效。",
+        "command": ".\\adb.exe shell \"cat /sys/class/amhdmitx/amhdmitx0/attr && strings /dev/block/env | grep -E 'color|bestmode'\"",
+        "commandLang": "bash",
+        "tip": "期望返回包含 420,10bit 与 is.bestmode=false。此时无论投影仪开机、关机或插拔信号线，色深已 100% 永久焊死。"
+      },
+      {
+        "stepNumber": "04",
+        "title": "安装 T1ZoomHelper (v3.0) 电视端画质自启服务",
+        "desc": "通过 ADB 安装自研的电视端后台服务 APK，并首次拉起激活。该微服务开机 1 秒内通过本地环回 ADB 静默自启，采用 Notification.PRIORITY_MIN 极低优先级前台保活，屏幕 0 像素遮挡，功耗几乎为零。",
+        "command": ".\\adb.exe install -r T1ZoomHelper.apk\n.\\adb.exe shell am start -n com.phicomm.t1zoom/.MainActivity",
+        "commandLang": "powershell",
+        "tip": "安装激活后即可彻底拔掉电脑！以后无论是遥控关机还是拔插头冷断电，服务都会在开机时全自动拉起就绪。"
+      },
+      {
+        "stepNumber": "05",
+        "title": "手机扫码访问 Web 调色盘与一键去黑边",
+        "desc": "手机连上同一 Wi-Fi，打开手机浏览器访问 http://盒机IP:8989（例如 http://192.168.123.98:8989），即可实时拖动滑块调节亮度、对比度、饱和度与晶晨 DNLP 硬件去灰，所有参数自动持久化保存。",
+        "tip": "放映 2.35:1 宽银幕大片时，手机轻触【125% 影院变焦】，上下恼人黑边瞬间消失，画面无损等比铺满整面 16:9 幕布！"
+      },
+      {
+        "stepNumber": "06",
+        "title": "Kodi 配合使用避坑高能预警",
+        "desc": "特别提醒：Kodi 播放普通的 16:9 片源时硬解原本完全稳定正常；去黑边只需手机点按 125% 硬件变焦即可。在 Kodi 的“视频设置”中，全局默认视图模式请务必保持为【正常 (Normal)】！",
+        "warning": "千万切勿手滑将【拉伸 16:9】设为默认设置！否则以后打开任何标准的 16:9 电视剧或综艺时，画面都会被强行压扁变形！"
+      }
+    ]
+  },
+{
     id: 'ai-saas-portal',
     title: 'NextGen 科技企业高端官网与响应式落地页',
     category: 'dev',

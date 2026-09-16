@@ -13,7 +13,15 @@ import {
   Image as ImageIcon,
   Star,
   MessageSquare,
-  Building2
+  Building2,
+  Copy,
+  Check,
+  Terminal,
+  Cpu,
+  AlertTriangle,
+  Sparkles,
+  BookOpen,
+  Wrench
 } from 'lucide-react';
 import './CaseDetail.css';
 
@@ -35,6 +43,34 @@ export const CaseDetail: React.FC<CaseDetailProps> = ({
 
   const prevCase: CaseItem = casesData[(currentIndex - 1 + casesData.length) % casesData.length];
   const nextCase: CaseItem = casesData[(currentIndex + 1) % casesData.length];
+
+  const [activeChapterId, setActiveChapterId] = React.useState<string>(() => {
+    return currentCase.storyChapters && currentCase.storyChapters.length > 0
+      ? currentCase.storyChapters[0].id
+      : '';
+  });
+  const [copiedSnippet, setCopiedSnippet] = React.useState<string | null>(null);
+
+  const handleCopySnippet = (text: string) => {
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(() => {
+        setCopiedSnippet(text);
+        setTimeout(() => {
+          setCopiedSnippet((prev) => (prev === text ? null : prev));
+        }, 2400);
+      });
+    }
+  };
+
+  // Sync active chapter when case changes
+  useEffect(() => {
+    if (currentCase.storyChapters && currentCase.storyChapters.length > 0) {
+      setActiveChapterId(currentCase.storyChapters[0].id);
+    }
+  }, [currentCase]);
+
+  const activeChapter = currentCase.storyChapters?.find((ch) => ch.id === activeChapterId) || currentCase.storyChapters?.[0];
+
 
   // Dynamic document title update
   useEffect(() => {
@@ -244,7 +280,9 @@ export const CaseDetail: React.FC<CaseDetailProps> = ({
           <div className="overview-content-grid">
             {/* Left Column: Direct narrative text (No heavy boxed frame) */}
             <div className="overview-narrative-flow">
-              <p>{overviewNarrative}</p>
+              {overviewNarrative.split('\n\n').map((para, pIdx) => (
+                <p key={pIdx}>{para}</p>
+              ))}
               
               <div className="overview-tech-pills">
                 <span className="tech-label">交付技术栈：</span>
@@ -314,6 +352,228 @@ export const CaseDetail: React.FC<CaseDetailProps> = ({
             ))}
           </div>
         </section>
+
+                {/* =========================================================================
+            3.5 OPTIONAL: 硬件规格与芯片流水线矩阵 (HARDWARE ARCHITECTURE)
+           ========================================================================= */}
+        {currentCase.hardwareSpecs && currentCase.hardwareSpecs.length > 0 && (
+          <section className="case-hardware-specs-section">
+            <div className="section-title-bar">
+              <span className="section-bar-accent" />
+              <h2 className="section-title-cn">硬件架构与芯片流水线</h2>
+              <span className="section-title-en">HARDWARE ARCHITECTURE</span>
+            </div>
+
+            <div className="hardware-specs-grid">
+              {currentCase.hardwareSpecs.map((spec, sIdx) => (
+                <div key={sIdx} className="hardware-spec-card">
+                  <div className="spec-card-top">
+                    <Cpu size={18} className="spec-chip-icon" />
+                    <span className="spec-card-label">{spec.label}</span>
+                  </div>
+                  <div className="spec-card-value">{spec.value}</div>
+                  <div className="spec-card-desc">{spec.desc}</div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* =========================================================================
+            3.6 OPTIONAL: 极客侦破录五幕剧 (THE HACKING ODYSSEY)
+           ========================================================================= */}
+        {currentCase.storyChapters && currentCase.storyChapters.length > 0 && activeChapter && (
+          <section className="case-geek-story-section">
+            <div className="section-title-bar">
+              <span className="section-bar-accent" />
+              <h2 className="section-title-cn">硬核破局手记：五幕极客名侦探录</h2>
+              <span className="section-title-en">THE HACKING ODYSSEY</span>
+            </div>
+
+            {currentCase.storyIntro && (
+              <div className="story-intro-banner">
+                <Sparkles size={20} className="story-intro-icon" />
+                <p>{currentCase.storyIntro}</p>
+              </div>
+            )}
+
+            {/* Chapter Tabs Navigation */}
+            <div className="story-tabs-bar" role="tablist" aria-label="故事章节切换">
+              {currentCase.storyChapters.map((ch, cIdx) => (
+                <button
+                  key={ch.id}
+                  role="tab"
+                  aria-selected={activeChapter.id === ch.id}
+                  className={`story-tab-btn ${activeChapter.id === ch.id ? 'active' : ''}`}
+                  onClick={() => setActiveChapterId(ch.id)}
+                >
+                  <span className="tab-number">ACT 0{cIdx + 1}</span>
+                  <span className="tab-label">{ch.badge.split('·')[1]?.trim() || ch.title}</span>
+                </button>
+              ))}
+            </div>
+
+            {/* Active Chapter Showcase Card */}
+            <div className="story-chapter-showcase">
+              <div className="showcase-header">
+                <div className="showcase-badge-row">
+                  <span className="chapter-badge">{activeChapter.badge}</span>
+                  <span className="chapter-tag-mini">
+                    <BookOpen size={13} /> 逆向现场解密
+                  </span>
+                </div>
+                <h3 className="chapter-showcase-title">{activeChapter.title}</h3>
+                <p className="chapter-showcase-subtitle">{activeChapter.subtitle}</p>
+              </div>
+
+              <div className="showcase-body">
+                {/* Narrative paragraphs */}
+                <div className="chapter-narrative-flow">
+                  {activeChapter.narrative.map((para, pIdx) => (
+                    <p key={pIdx}>{para}</p>
+                  ))}
+                </div>
+
+                {/* Key Takeaway Callout */}
+                {activeChapter.keyTakeaway && (
+                  <div className="chapter-takeaway-callout">
+                    <div className="takeaway-badge">
+                      <Sparkles size={14} />
+                      <span>极客破局心法</span>
+                    </div>
+                    <p className="takeaway-text">{activeChapter.keyTakeaway}</p>
+                  </div>
+                )}
+
+                {/* Code Snippet Box with Copy Button */}
+                {activeChapter.codeSnippet && (
+                  <div className="chapter-terminal-card">
+                    <div className="terminal-header">
+                      <div className="terminal-dots">
+                        <span className="dot dot-red" />
+                        <span className="dot dot-yellow" />
+                        <span className="dot dot-green" />
+                      </div>
+                      <div className="terminal-lang-badge">
+                        <Terminal size={13} />
+                        <span>{activeChapter.codeSnippet.lang.toUpperCase()}</span>
+                      </div>
+                      <button
+                        className="btn-copy-terminal"
+                        onClick={() => handleCopySnippet(activeChapter.codeSnippet!.code)}
+                        aria-label="复制代码"
+                      >
+                        {copiedSnippet === activeChapter.codeSnippet.code ? (
+                          <>
+                            <Check size={13} />
+                            <span>已复制到剪贴板</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy size={13} />
+                            <span>复制代码</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+
+                    <pre className="terminal-code-body">
+                      <code>{activeChapter.codeSnippet.code}</code>
+                    </pre>
+
+                    {activeChapter.codeSnippet.note && (
+                      <div className="terminal-footer-note">
+                        <span># </span>
+                        {activeChapter.codeSnippet.note}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* =========================================================================
+            3.7 OPTIONAL: 保姆级实操教程 (STEP-BY-STEP TUTORIAL)
+           ========================================================================= */}
+        {currentCase.tutorialSteps && currentCase.tutorialSteps.length > 0 && (
+          <section className="case-tutorial-section">
+            <div className="section-title-bar">
+              <span className="section-bar-accent" />
+              <h2 className="section-title-cn">保姆级实操教程：一键固化与影院调校</h2>
+              <span className="section-title-en">STEP-BY-STEP TUTORIAL</span>
+            </div>
+
+            <p className="tutorial-section-intro">
+              无需漫长繁琐的刷机折腾，拿起电脑与手机，按照以下步骤即可完成原厂底层 4K 60Hz 10bit 闪存固化、硬解热修复与自启画质微服务部署。
+            </p>
+
+            <div className="tutorial-steps-timeline">
+              {currentCase.tutorialSteps.map((step, sIndex) => (
+                <div key={sIndex} className="tutorial-step-card">
+                  <div className="step-card-header">
+                    <div className="step-number-bubble">STEP {step.stepNumber}</div>
+                    <h3 className="step-title">{step.title}</h3>
+                  </div>
+
+                  <p className="step-description">{step.desc}</p>
+
+                  {step.command && (
+                    <div className="step-command-box">
+                      <div className="command-header">
+                        <span className="command-lang-tag">
+                          <Terminal size={12} />
+                          {step.commandLang || 'shell'}
+                        </span>
+                        <button
+                          className="btn-copy-command"
+                          onClick={() => handleCopySnippet(step.command!)}
+                          aria-label="复制此步骤命令"
+                        >
+                          {copiedSnippet === step.command ? (
+                            <>
+                              <Check size={12} />
+                              <span>已复制</span>
+                            </>
+                          ) : (
+                            <>
+                              <Copy size={12} />
+                              <span>一键复制指令</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                      <pre className="command-pre">
+                        <code>{step.command}</code>
+                      </pre>
+                    </div>
+                  )}
+
+                  {step.tip && (
+                    <div className="step-tip-callout">
+                      <Wrench size={15} className="tip-icon" />
+                      <div className="tip-content">
+                        <strong>极客提示：</strong>
+                        {step.tip}
+                      </div>
+                    </div>
+                  )}
+
+                  {step.warning && (
+                    <div className="step-warning-callout">
+                      <AlertTriangle size={16} className="warning-icon" />
+                      <div className="warning-content">
+                        <strong>避坑高能预警：</strong>
+                        {step.warning}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* =========================================================================
             4. SECTION: | 页面截图 PAGE SCREENSHOTS
