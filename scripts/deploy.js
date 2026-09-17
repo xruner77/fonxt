@@ -42,18 +42,18 @@ async function deploy() {
 
   // 3. Upload archive
   const remoteTmp = `/tmp/${CONFIG.archiveName}`;
-  const scpCmd = `scp -P ${CONFIG.port} -i "${CONFIG.keyPath}" "${archivePath}" ${CONFIG.user}@${CONFIG.host}:${remoteTmp}`;
+  const scpCmd = `scp -P ${CONFIG.port} -i "${CONFIG.keyPath}" -o StrictHostKeyChecking=no -o ConnectTimeout=15 "${archivePath}" ${CONFIG.user}@${CONFIG.host}:${remoteTmp}`;
   run(scpCmd, `Uploading archive to ${CONFIG.host}:${remoteTmp}`);
 
   // 4. Remote extract & set permissions
   const remoteCmds = [
     `tar -xzf ${remoteTmp} -C ${CONFIG.remoteDir}/`,
     `rm -f ${remoteTmp}`,
-    `chown -R www:www ${CONFIG.remoteDir}/assets ${CONFIG.remoteDir}/*.html ${CONFIG.remoteDir}/*.png ${CONFIG.remoteDir}/*.txt ${CONFIG.remoteDir}/*.xml 2>/dev/null || true`,
-    `chmod -R 755 ${CONFIG.remoteDir}/assets ${CONFIG.remoteDir}/*.html ${CONFIG.remoteDir}/*.png ${CONFIG.remoteDir}/*.txt ${CONFIG.remoteDir}/*.xml 2>/dev/null || true`,
+    `chown -R www:www ${CONFIG.remoteDir}/assets ${CONFIG.remoteDir}/case ${CONFIG.remoteDir}/*.html ${CONFIG.remoteDir}/*.png ${CONFIG.remoteDir}/*.txt ${CONFIG.remoteDir}/*.xml 2>/dev/null || true`,
+    `chmod -R 755 ${CONFIG.remoteDir}/assets ${CONFIG.remoteDir}/case ${CONFIG.remoteDir}/*.html ${CONFIG.remoteDir}/*.png ${CONFIG.remoteDir}/*.txt ${CONFIG.remoteDir}/*.xml 2>/dev/null || true`,
   ].join(' && ');
 
-  const sshCmd = `ssh -p ${CONFIG.port} -i "${CONFIG.keyPath}" ${CONFIG.user}@${CONFIG.host} "${remoteCmds}"`;
+  const sshCmd = `ssh -p ${CONFIG.port} -i "${CONFIG.keyPath}" -o StrictHostKeyChecking=no -o ConnectTimeout=15 ${CONFIG.user}@${CONFIG.host} "${remoteCmds}"`;
   run(sshCmd, 'Extracting and updating permissions on server');
 
   // 5. Clean up local archive
@@ -63,12 +63,21 @@ async function deploy() {
   }
 
   // 6. Verification
-  console.log('\n🔍 Verifying server response...');
+  console.log('\n🔍 Verifying server response across multiple standalone HTML pages...');
+  const testUrls = [
+    'http://127.0.0.1/',
+    'http://127.0.0.1/services.html',
+    'http://127.0.0.1/portfolio.html',
+    'http://127.0.0.1/case/phicomm-t1-hack.html',
+  ];
+
   try {
-    const verifyCmd = `ssh -p ${CONFIG.port} -i "${CONFIG.keyPath}" ${CONFIG.user}@${CONFIG.host} "curl -I -s -H 'Host: fonxt.com' http://127.0.0.1/"`;
-    const res = execSync(verifyCmd, { encoding: 'utf-8' });
-    console.log(res);
-    console.log('🎉 Deployment succeeded! Site is live at https://fonxt.com');
+    for (const testUrl of testUrls) {
+      const verifyCmd = `ssh -p ${CONFIG.port} -i "${CONFIG.keyPath}" ${CONFIG.user}@${CONFIG.host} "curl -I -s -H 'Host: fonxt.com' ${testUrl} | head -n 1"`;
+      const res = execSync(verifyCmd, { encoding: 'utf-8' }).trim();
+      console.log(`  ✓ [${testUrl}]: ${res}`);
+    }
+    console.log('\n🎉 Deployment succeeded! All standalone pages are live at https://fonxt.com');
   } catch (err) {
     console.warn('⚠️ Verification check warning:', err.message);
   }

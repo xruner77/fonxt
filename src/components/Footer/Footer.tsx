@@ -1,13 +1,15 @@
 import React from 'react';
 import { siteConfig } from '../../config/site';
 import { ArrowUp, ArrowRight } from 'lucide-react';
+import { getAssetPrefix } from '../../utils/router';
 import './Footer.css';
 
 interface FooterProps {
   onOpenContact: () => void;
+  isSubdir?: boolean;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onOpenContact }) => {
+export const Footer: React.FC<FooterProps> = ({ onOpenContact, isSubdir = false }) => {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -27,6 +29,8 @@ export const Footer: React.FC<FooterProps> = ({ onOpenContact }) => {
     { name: 'Docker & vLLM', category: 'DevOps' },
   ];
 
+  const logoSrc = `${getAssetPrefix(isSubdir)}logo.png`;
+
   return (
     <footer className="site-footer">
       {/* 1. Large Brand CTA Ribbon */}
@@ -34,7 +38,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenContact }) => {
         <div className="container footer-cta-inner">
           <div className="footer-brand-side">
             <img 
-              src="./logo.png" 
+              src={logoSrc} 
               alt="FONXT" 
               style={{ height: '40px', width: 'fit-content' }}
             />
@@ -91,3 +95,5 @@ export const Footer: React.FC<FooterProps> = ({ onOpenContact }) => {
     </footer>
   );
 };
+
+export default Footer;

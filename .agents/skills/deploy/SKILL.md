@@ -51,7 +51,7 @@ node scripts/deploy.js
 
 4. **远端解压与权限修复**：
    ```powershell
-   ssh -p 58750 -i "$env:USERPROFILE\.ssh\152.70.91.67_id_ed25519" root@a2.xruner.tk "tar -xzf /tmp/dist.tar.gz -C /www/wwwroot/fonxt.com/ && rm -f /tmp/dist.tar.gz && chown -R www:www /www/wwwroot/fonxt.com/assets /www/wwwroot/fonxt.com/*.html /www/wwwroot/fonxt.com/*.png /www/wwwroot/fonxt.com/*.txt /www/wwwroot/fonxt.com/*.xml 2>/dev/null || true"
+   ssh -p 58750 -i "$env:USERPROFILE\.ssh\152.70.91.67_id_ed25519" root@a2.xruner.tk "tar -xzf /tmp/dist.tar.gz -C /www/wwwroot/fonxt.com/ && rm -f /tmp/dist.tar.gz && chown -R www:www /www/wwwroot/fonxt.com/assets /www/wwwroot/fonxt.com/case /www/wwwroot/fonxt.com/*.html /www/wwwroot/fonxt.com/*.png /www/wwwroot/fonxt.com/*.txt /www/wwwroot/fonxt.com/*.xml 2>/dev/null || true && chmod -R 755 /www/wwwroot/fonxt.com/assets /www/wwwroot/fonxt.com/case /www/wwwroot/fonxt.com/*.html /www/wwwroot/fonxt.com/*.png /www/wwwroot/fonxt.com/*.txt /www/wwwroot/fonxt.com/*.xml 2>/dev/null || true"
    ```
    > **注意**：宝塔面板中的 `.user.ini` 具有防篡改锁属性（`+i`），执行全局 `chown -R` 时会对该文件抛出 `Operation not permitted`。因此权限命令应精确针对静态资产，或在末尾追加 `|| true` 忽略锁定文件。
 
@@ -60,8 +60,8 @@ node scripts/deploy.js
    Remove-Item -Force dist.tar.gz
    ```
 
-6. **部署后健康验证**：
+6. **部署后多页面健康验证**：
    ```powershell
-   ssh -p 58750 -i "$env:USERPROFILE\.ssh\152.70.91.67_id_ed25519" root@a2.xruner.tk "curl -I -s -H 'Host: fonxt.com' http://127.0.0.1/"
+   ssh -p 58750 -i "$env:USERPROFILE\.ssh\152.70.91.67_id_ed25519" root@a2.xruner.tk "curl -I -s -H 'Host: fonxt.com' http://127.0.0.1/ && curl -I -s -H 'Host: fonxt.com' http://127.0.0.1/services.html && curl -I -s -H 'Host: fonxt.com' http://127.0.0.1/case/phicomm-t1-hack.html"
    ```
-   * 确认响应 `HTTP/1.1 200 OK`，且内容长度正常。
+   * 确认各独立实体 HTML 响应 `HTTP/1.1 200 OK`，且内容长度正常。

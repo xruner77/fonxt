@@ -1,14 +1,19 @@
 import React, { useState } from 'react';
 import { casesData, caseCategories } from '../../config/cases';
 import { ArrowRight, Sparkles } from 'lucide-react';
+import { getCaseUrl } from '../../utils/router';
 import './Portfolio.css';
 
 interface PortfolioProps {
-  onOpenContact: () => void;
-  onSelectCase: (caseId: string) => void;
+  onOpenContact?: () => void;
+  onSelectCase?: (caseId: string) => void;
+  isSubdir?: boolean;
 }
 
-export const Portfolio: React.FC<PortfolioProps> = ({ onOpenContact: _onOpenContact, onSelectCase }) => {
+export const Portfolio: React.FC<PortfolioProps> = ({ 
+  onSelectCase,
+  isSubdir = false,
+}) => {
   const [activeCategory, setActiveCategory] = useState<string>('all');
 
   const filteredCases = activeCategory === 'all'
@@ -49,46 +54,58 @@ export const Portfolio: React.FC<PortfolioProps> = ({ onOpenContact: _onOpenCont
 
         {/* Cases Grid */}
         <div className="cases-grid">
-          {filteredCases.map((item) => (
-            <div
-              key={item.id}
-              className="case-card"
-              onClick={() => onSelectCase(item.id)}
-            >
-              <div className="case-cover-wrap">
-                <img
-                  src={item.coverImage}
-                  alt={item.title}
-                  className="case-cover-img"
-                  loading="lazy"
-                />
-                <span className="case-category-badge">{item.categoryLabel}</span>
-              </div>
-
-              <div className="case-card-body">
-                <h3 className="case-card-title">{item.title}</h3>
-                <p className="case-card-subtitle">{item.subtitle}</p>
-
-                <div className="case-tech-tags">
-                  {item.techStack.slice(0, 3).map((tech) => (
-                    <span key={tech} className="tech-tag-mini">
-                      {tech}
-                    </span>
-                  ))}
-                  {item.techStack.length > 3 && (
-                    <span className="tech-tag-mini">+{item.techStack.length - 3}</span>
-                  )}
+          {filteredCases.map((item) => {
+            const caseUrl = getCaseUrl(item.id, isSubdir);
+            return (
+              <a
+                key={item.id}
+                href={caseUrl}
+                className="case-card"
+                onClick={(e) => {
+                  if (onSelectCase && !e.ctrlKey && !e.metaKey && !e.shiftKey) {
+                    // 如果传入了自定义路由处理函数，优先平滑跳转
+                    // e.preventDefault();
+                    // onSelectCase(item.id);
+                  }
+                }}
+              >
+                <div className="case-cover-wrap">
+                  <img
+                    src={item.coverImage}
+                    alt={item.title}
+                    className="case-cover-img"
+                    loading="lazy"
+                  />
+                  <span className="case-category-badge">{item.categoryLabel}</span>
                 </div>
 
-                <div className="case-card-link">
-                  <span>查看案例详情与交付物</span>
-                  <ArrowRight size={15} />
+                <div className="case-card-body">
+                  <h3 className="case-card-title">{item.title}</h3>
+                  <p className="case-card-subtitle">{item.subtitle}</p>
+
+                  <div className="case-tech-tags">
+                    {item.techStack.slice(0, 3).map((tech) => (
+                      <span key={tech} className="tech-tag-mini">
+                        {tech}
+                      </span>
+                    ))}
+                    {item.techStack.length > 3 && (
+                      <span className="tech-tag-mini">+{item.techStack.length - 3}</span>
+                    )}
+                  </div>
+
+                  <div className="case-card-link">
+                    <span>查看案例详情与交付物</span>
+                    <ArrowRight size={15} />
+                  </div>
                 </div>
-              </div>
-            </div>
-          ))}
+              </a>
+            );
+          })}
         </div>
       </div>
     </section>
   );
 };
+
+export default Portfolio;

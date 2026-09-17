@@ -245,9 +245,9 @@
   transition: all var(--transition-fast);
 }
 
-.drawer-nav-link:hover {
+.drawer-nav-link:hover, .drawer-nav-link.active {
   background: #f8fafc;
-  color: var(--color-cyan);
+  color: var(--color-primary, #2563eb);
   padding-left: 18px;
 }
 

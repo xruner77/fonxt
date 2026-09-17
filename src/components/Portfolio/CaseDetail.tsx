@@ -27,8 +27,8 @@ import './CaseDetail.css';
 
 interface CaseDetailProps {
   caseId: string;
-  onBack: () => void;
-  onSelectCase: (caseId: string) => void;
+  onBack?: () => void;
+  onSelectCase?: (caseId: string) => void;
   onOpenContact: () => void;
 }
 
@@ -166,19 +166,25 @@ export const CaseDetail: React.FC<CaseDetailProps> = ({
         <div className="container">
           {/* Top Navigation & Breadcrumbs */}
           <div className="case-detail-topbar">
-            <button 
+            <a 
+              href="../portfolio.html" 
               className="btn-back-portfolio" 
-              onClick={onBack}
-              aria-label="返回全部案例"
+              onClick={(e) => {
+                if (onBack) {
+                  e.preventDefault();
+                  onBack();
+                }
+              }}
+              aria-label="返回精选案例列表"
             >
               <ArrowLeft size={16} />
               <span>返回精选案例列表</span>
-            </button>
+            </a>
 
             <nav className="case-detail-breadcrumb" aria-label="Breadcrumb">
-              <button onClick={onBack}>首页</button>
+              <a href="../index.html">首页</a>
               <ChevronRight size={14} />
-              <button onClick={onBack}>作品案例</button>
+              <a href="../portfolio.html">作品案例</a>
               <ChevronRight size={14} />
               <span className="breadcrumb-current">{currentCase.title}</span>
             </nav>
@@ -657,9 +663,15 @@ export const CaseDetail: React.FC<CaseDetailProps> = ({
 
         {/* Previous & Next Case Pagination */}
         <div className="case-pagination-grid">
-          <button 
+          <a 
+            href={`./${prevCase.id}.html`}
             className="nav-case-card prev"
-            onClick={() => onSelectCase(prevCase.id)}
+            onClick={(e) => {
+              if (onSelectCase) {
+                e.preventDefault();
+                onSelectCase(prevCase.id);
+              }
+            }}
             aria-label={`上一篇案例: ${prevCase.title}`}
           >
             <div className="nav-arrow-circle">
@@ -669,11 +681,17 @@ export const CaseDetail: React.FC<CaseDetailProps> = ({
               <span className="nav-case-sublabel">上一篇案例</span>
               <span className="nav-case-title">{prevCase.title}</span>
             </div>
-          </button>
+          </a>
 
-          <button 
+          <a 
+            href={`./${nextCase.id}.html`}
             className="nav-case-card next"
-            onClick={() => onSelectCase(nextCase.id)}
+            onClick={(e) => {
+              if (onSelectCase) {
+                e.preventDefault();
+                onSelectCase(nextCase.id);
+              }
+            }}
             aria-label={`下一篇案例: ${nextCase.title}`}
           >
             <div className="nav-case-info">
@@ -683,7 +701,7 @@ export const CaseDetail: React.FC<CaseDetailProps> = ({
             <div className="nav-arrow-circle">
               <ArrowRight size={18} />
             </div>
-          </button>
+          </a>
         </div>
       </div>
     </div>

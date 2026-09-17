@@ -85,7 +85,8 @@
   color: var(--text-muted);
 }
 
-.case-detail-breadcrumb button {
+.case-detail-breadcrumb button,
+.case-detail-breadcrumb a {
   color: var(--text-secondary);
   background: none;
   border: none;
@@ -96,7 +97,8 @@
   transition: color var(--transition-fast);
 }
 
-.case-detail-breadcrumb button:hover {
+.case-detail-breadcrumb button:hover,
+.case-detail-breadcrumb a:hover {
   color: var(--color-cyan);
 }
 

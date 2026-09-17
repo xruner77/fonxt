@@ -1,38 +1,45 @@
 import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header/Header';
-import { Hero } from './components/Hero/Hero';
-import { ServicesBento } from './components/Services/ServicesBento';
-import { AIDemo } from './components/AIDemo/AIDemo';
-import { Portfolio } from './components/Portfolio/Portfolio';
-import { CaseDetail } from './components/Portfolio/CaseDetail';
-import { Workflow } from './components/Workflow/Workflow';
-import { Comparison } from './components/Comparison/Comparison';
-import { FAQ } from './components/FAQ/FAQ';
 import { Footer } from './components/Footer/Footer';
 import { ContactModal } from './components/ContactModal/ContactModal';
 import { Toast } from './components/Toast/Toast';
 
-export const App: React.FC = () => {
+import { HomePage } from './pages/HomePage';
+import { ServicesPage } from './pages/ServicesPage';
+import { AIDemoPage } from './pages/AIDemoPage';
+import { PortfolioPage } from './pages/PortfolioPage';
+import { WorkflowPage } from './pages/WorkflowPage';
+import { FAQPage } from './pages/FAQPage';
+import { NotFoundPage } from './pages/NotFoundPage';
+import { CaseDetail } from './components/Portfolio/CaseDetail';
+
+import { RouteInfo, parseRoute, getInitialClientRoute } from './utils/router';
+
+interface AppProps {
+  initialRoute?: string;
+}
+
+export const App: React.FC<AppProps> = ({ initialRoute }) => {
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
-  const [currentCaseId, setCurrentCaseId] = useState<string | null>(() => {
+
+  // 路由状态管理：优先使用传入的 SSR initialRoute，客户端默认取当前 location
+  const [currentRoute] = useState<RouteInfo>(() => {
+    if (initialRoute) {
+      return parseRoute(initialRoute);
+    }
+    return getInitialClientRoute();
+  });
+
+  // 向后兼容处理：旧版 Hash 路由平滑自动重定向到物理 HTML
+  useEffect(() => {
     if (typeof window !== 'undefined') {
       const hash = window.location.hash;
       const match = hash.match(/^#\/case\/([a-zA-Z0-9_-]+)/);
-      return match ? match[1] : null;
+      if (match) {
+        window.location.replace(`./case/${match[1]}.html`);
+      }
     }
-    return null;
-  });
-
-  useEffect(() => {
-    const handleHashChange = () => {
-      const hash = window.location.hash;
-      const match = hash.match(/^#\/case\/([a-zA-Z0-9_-]+)/);
-      setCurrentCaseId(match ? match[1] : null);
-    };
-
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
   const showToast = (msg: string) => {
@@ -42,101 +49,60 @@ export const App: React.FC = () => {
     }, 3200);
   };
 
-  const handleOpenCase = (caseId: string) => {
-    window.location.hash = `#/case/${caseId}`;
-    setCurrentCaseId(caseId);
-  };
-
-  const handleBackToPortfolio = () => {
-    window.location.hash = '#portfolio';
-    setCurrentCaseId(null);
-    setTimeout(() => {
-      const el = document.getElementById('portfolio');
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth' });
-      } else {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    }, 60);
-  };
-
-  const handleNavClick = (href: string) => {
-    if (currentCaseId) {
-      setCurrentCaseId(null);
-      window.location.hash = href;
-      setTimeout(() => {
-        if (href.startsWith('#')) {
-          const el = document.querySelector(href);
-          if (el) {
-            el.scrollIntoView({ behavior: 'smooth' });
-          }
-        }
-      }, 60);
-    } else {
-      if (href.startsWith('#')) {
-        const el = document.querySelector(href);
-        if (el) {
-          el.scrollIntoView({ behavior: 'smooth' });
-        }
-      }
+  const renderCurrentPage = () => {
+    switch (currentRoute.type) {
+      case 'home':
+        return <HomePage onOpenContact={() => setIsContactOpen(true)} />;
+      case 'services':
+        return <ServicesPage onOpenContact={() => setIsContactOpen(true)} />;
+      case 'ai-demo':
+        return <AIDemoPage onOpenContact={() => setIsContactOpen(true)} />;
+      case 'portfolio':
+        return <PortfolioPage onOpenContact={() => setIsContactOpen(true)} />;
+      case 'workflow':
+        return <WorkflowPage onOpenContact={() => setIsContactOpen(true)} />;
+      case 'faq':
+        return <FAQPage onOpenContact={() => setIsContactOpen(true)} />;
+      case 'case':
+        return (
+          <CaseDetail
+            caseId={currentRoute.caseId || 'phicomm-t1-hack'}
+            onOpenContact={() => setIsContactOpen(true)}
+          />
+        );
+      case '404':
+        return <NotFoundPage onOpenContact={() => setIsContactOpen(true)} />;
+      default:
+        return <HomePage onOpenContact={() => setIsContactOpen(true)} />;
     }
   };
 
   return (
     <>
-      {/* 顶部导航 */}
+      {/* 顶部导航：自适应当前页面激活状态与相对链接 */}
       <Header 
-        onOpenContact={() => setIsContactOpen(true)} 
-        onNavigate={handleNavClick}
+        onOpenContact={() => setIsContactOpen(true)}
+        currentPage={currentRoute.type}
+        isSubdir={currentRoute.isSubdir}
       />
 
+      {/* 页面主干 */}
       <main>
-        {currentCaseId ? (
-          /* 作品案例独立详情页 */
-          <CaseDetail
-            caseId={currentCaseId}
-            onBack={handleBackToPortfolio}
-            onSelectCase={handleOpenCase}
-            onOpenContact={() => setIsContactOpen(true)}
-          />
-        ) : (
-          /* 首页单页内容 */
-          <>
-            {/* 首屏与多角色切片 */}
-            <Hero onOpenContact={() => setIsContactOpen(true)} />
-
-            {/* Bento Grid 服务能力矩阵 */}
-            <ServicesBento onOpenContact={() => setIsContactOpen(true)} />
-
-            {/* 现场可交互 AI 业务助手体验区 */}
-            <AIDemo onOpenContact={() => setIsContactOpen(true)} />
-
-            {/* 精选案例画廊 */}
-            <Portfolio 
-              onOpenContact={() => setIsContactOpen(true)} 
-              onSelectCase={handleOpenCase}
-            />
-
-            {/* 标准化交付流程 */}
-            <Workflow />
-
-            {/* 超级个体优势对比 */}
-            <Comparison />
-
-            {/* 常见问题解答 */}
-            <FAQ />
-          </>
-        )}
+        {renderCurrentPage()}
       </main>
 
-      {/* 底部与技术军火库 */}
-      <Footer onOpenContact={() => setIsContactOpen(true)} />
+      {/* 全局底部 */}
+      <Footer 
+        onOpenContact={() => setIsContactOpen(true)}
+        isSubdir={currentRoute.isSubdir}
+      />
 
-      {/* 全局多渠道联系弹窗 */}
+      {/* 全局联系弹窗 */}
       <ContactModal
         isOpen={isContactOpen}
         onClose={() => setIsContactOpen(false)}
         onShowToast={showToast}
+        isSubdir={currentRoute.isSubdir}
       />
 
       {/* 全局反馈 Toast */}

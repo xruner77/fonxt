@@ -8,12 +8,14 @@ interface ContactModalProps {
   isOpen: boolean;
   onClose: () => void;
   onShowToast: (msg: string) => void;
+  isSubdir?: boolean;
 }
 
 export const ContactModal: React.FC<ContactModalProps> = ({
   isOpen,
   onClose,
   onShowToast,
+  isSubdir = false,
 }) => {
   const [copied, setCopied] = useState(false);
   const [formData, setFormData] = useState({
@@ -23,6 +25,10 @@ export const ContactModal: React.FC<ContactModalProps> = ({
     budget: '5千~1.5万',
     desc: '',
   });
+
+  const qrCodeSrc = isSubdir
+    ? (siteConfig.wechatQrCode.startsWith('/') ? `..${siteConfig.wechatQrCode}` : `../${siteConfig.wechatQrCode}`)
+    : (siteConfig.wechatQrCode.startsWith('/') ? `.${siteConfig.wechatQrCode}` : `./${siteConfig.wechatQrCode}`);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -105,7 +111,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({
             <div className="qr-card-wrap">
               {/* Native img for long-press recognition in WeChat */}
               <img
-                src={siteConfig.wechatQrCode}
+                src={qrCodeSrc}
                 alt="FONXT 微信二维码"
                 className="qr-code-img"
               />

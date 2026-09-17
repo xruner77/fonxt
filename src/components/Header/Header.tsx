@@ -2,14 +2,34 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { siteConfig } from '../../config/site';
 import { MessageSquare, ArrowRight, Menu, X, ChevronRight } from 'lucide-react';
+import { PageType, getPageUrl, getAssetPrefix } from '../../utils/router';
 import './Header.css';
 
 interface HeaderProps {
   onOpenContact: () => void;
-  onNavigate?: (href: string) => void;
+  currentPage?: PageType;
+  isSubdir?: boolean;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onOpenContact, onNavigate }) => {
+interface NavConfigItem {
+  key: PageType;
+  label: string;
+}
+
+const NAV_PAGES: NavConfigItem[] = [
+  { key: 'home', label: '首页' },
+  { key: 'services', label: '服务内容' },
+  { key: 'ai-demo', label: 'AI体验' },
+  { key: 'portfolio', label: '作品案例' },
+  { key: 'workflow', label: '交付流程' },
+  { key: 'faq', label: '常见问题' },
+];
+
+export const Header: React.FC<HeaderProps> = ({ 
+  onOpenContact, 
+  currentPage = 'home',
+  isSubdir = false,
+}) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -33,27 +53,17 @@ export const Header: React.FC<HeaderProps> = ({ onOpenContact, onNavigate }) => 
     }
   }, [mobileMenuOpen]);
 
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    e.preventDefault();
-    setMobileMenuOpen(false);
-    if (onNavigate) {
-      onNavigate(href);
-      return;
-    }
-    const targetElement = document.querySelector(href);
-    if (targetElement) {
-      targetElement.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+  const logoSrc = `${getAssetPrefix(isSubdir)}logo.png`;
+  const homeHref = getPageUrl('home', isSubdir);
 
   return (
     <>
       <header className={`site-header ${scrolled ? 'scrolled' : ''}`}>
         <div className="container header-inner">
           {/* Brand Logo */}
-          <a href="#hero" className="header-brand" onClick={(e) => handleNavClick(e, '#hero')}>
+          <a href={homeHref} className="header-brand" aria-label="返回 FONXT 首页">
             <img 
-              src="./logo.png" 
+              src={logoSrc} 
               alt="FONXT" 
               className="brand-logo-img"
               onError={(e) => {
@@ -64,16 +74,20 @@ export const Header: React.FC<HeaderProps> = ({ onOpenContact, onNavigate }) => 
 
           {/* Desktop Nav */}
           <nav className="header-nav" aria-label="Main Navigation">
-            {siteConfig.navItems.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                className="nav-link"
-                onClick={(e) => handleNavClick(e, item.href)}
-              >
-                {item.label}
-              </a>
-            ))}
+            {NAV_PAGES.map((item) => {
+              const href = getPageUrl(item.key, isSubdir);
+              const isActive = currentPage === item.key;
+              return (
+                <a
+                  key={item.key}
+                  href={href}
+                  className={`nav-link ${isActive ? 'active' : ''}`}
+                  aria-current={isActive ? 'page' : undefined}
+                >
+                  {item.label}
+                </a>
+              );
+            })}
           </nav>
 
           {/* Desktop Right Actions */}
@@ -106,7 +120,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenContact, onNavigate }) => 
         </div>
       </header>
 
-      {/* Mobile Drawer using Portal to escape Header's backdrop-filter containing block */}
+      {/* Mobile Drawer using Portal */}
       {typeof document !== 'undefined' && createPortal(
         <div 
           className={`mobile-drawer-overlay ${mobileMenuOpen ? 'open' : ''}`}
@@ -117,7 +131,9 @@ export const Header: React.FC<HeaderProps> = ({ onOpenContact, onNavigate }) => 
             onClick={(e) => e.stopPropagation()}
           >
             <div className="drawer-header">
-              <img src="./logo.png" alt="FONXT" className="drawer-logo" />
+              <a href={homeHref} onClick={() => setMobileMenuOpen(false)}>
+                <img src={logoSrc} alt="FONXT" className="drawer-logo" />
+              </a>
               <button 
                 className="btn-close-drawer"
                 onClick={() => setMobileMenuOpen(false)}
@@ -128,17 +144,21 @@ export const Header: React.FC<HeaderProps> = ({ onOpenContact, onNavigate }) => 
             </div>
 
             <div className="drawer-nav">
-              {siteConfig.navItems.map((item) => (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  className="drawer-nav-link"
-                  onClick={(e) => handleNavClick(e, item.href)}
-                >
-                  <span>{item.label}</span>
-                  <ChevronRight size={16} className="drawer-chevron" />
-                </a>
-              ))}
+              {NAV_PAGES.map((item) => {
+                const href = getPageUrl(item.key, isSubdir);
+                const isActive = currentPage === item.key;
+                return (
+                  <a
+                    key={item.key}
+                    href={href}
+                    className={`drawer-nav-link ${isActive ? 'active' : ''}`}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <span>{item.label}</span>
+                    <ChevronRight size={16} className="drawer-chevron" />
+                  </a>
+                );
+              })}
             </div>
 
             <div className="drawer-actions">
@@ -164,3 +184,5 @@ export const Header: React.FC<HeaderProps> = ({ onOpenContact, onNavigate }) => 
     </>
   );
 };
+
+export default Header;
