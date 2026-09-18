@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 
 const CONFIG = {
-  host: 'a2.xruner.tk',
+  host: '152.70.91.67', // a2.xruner.tk 直连 IP
   port: '58750',
   user: 'root',
   keyPath: path.join(os.homedir(), '.ssh', '152.70.91.67_id_ed25519'),
@@ -53,7 +53,7 @@ async function deploy() {
     `chmod -R 755 ${CONFIG.remoteDir}/assets ${CONFIG.remoteDir}/case ${CONFIG.remoteDir}/downloads ${CONFIG.remoteDir}/*.html ${CONFIG.remoteDir}/*.png ${CONFIG.remoteDir}/*.txt ${CONFIG.remoteDir}/*.xml 2>/dev/null || true`,
   ].join(' && ');
 
-  const sshCmd = `ssh -p ${CONFIG.port} -i "${CONFIG.keyPath}" -o StrictHostKeyChecking=no -o ConnectTimeout=15 ${CONFIG.user}@${CONFIG.host} "${remoteCmds}"`;
+  const sshCmd = `ssh -n -T -p ${CONFIG.port} -i "${CONFIG.keyPath}" -o StrictHostKeyChecking=no -o ConnectTimeout=15 ${CONFIG.user}@${CONFIG.host} "${remoteCmds}"`;
   run(sshCmd, 'Extracting and updating permissions on server');
 
   // 5. Clean up local archive
@@ -74,7 +74,7 @@ async function deploy() {
 
   try {
     for (const testUrl of testUrls) {
-      const verifyCmd = `ssh -p ${CONFIG.port} -i "${CONFIG.keyPath}" ${CONFIG.user}@${CONFIG.host} "curl -I -s -H 'Host: fonxt.com' ${testUrl} | head -n 1"`;
+      const verifyCmd = `ssh -n -T -p ${CONFIG.port} -i "${CONFIG.keyPath}" ${CONFIG.user}@${CONFIG.host} "curl -I -s -H 'Host: fonxt.com' ${testUrl} | head -n 1"`;
       const res = execSync(verifyCmd, { encoding: 'utf-8' }).trim();
       console.log(`  ✓ [${testUrl}]: ${res}`);
     }

@@ -117,6 +117,7 @@ export interface CaseItem {
     screenshots?: CaseScreenshots;
 
   // 硬核极客开发案例与实战教程扩展（可选 + 完整向下兼容）
+  seoKeywords?: string[];
   storyIntro?: string;
   storyChapters?: StoryChapter[];
   tutorialSteps?: TutorialStep[];
@@ -171,6 +172,20 @@ export const casesData: CaseItem[] = [  {
       "物理闪存补丁",
       "画质引擎",
       "家庭影院"
+    ],
+    "seoKeywords": [
+      "斐讯T1",
+      "斐讯T1 4K 60Hz 10bit",
+      "晶晨S912底层参数",
+      "明基TK700 8bit降级",
+      "Kodi硬解死机",
+      "T1ZoomHelper.apk下载",
+      "Android底层参数提取",
+      "disp_mode 2160p60hz42010bit",
+      "晶晨芯片VPP画面缩放",
+      "U-Boot环境变量固化",
+      "Android沙箱Seccomp热补丁",
+      "局域网ADB提权微服务"
     ],
     "projectTime": "2026.03",
     "visitUrl": "局域网微服务 · GitHub 开源",
@@ -600,6 +615,16 @@ export const casesData: CaseItem[] = [  {
         { image: '/assets/cases/case-mini.png', label: '移动端页面效果（功能列表）' },
       ],
     },
+    seoKeywords: [
+    "企业官网设计制作",
+    "AI科技官网定制",
+    "高端响应式网站",
+    "SaaS产品落地页设计",
+    "暗夜玻璃拟态UI",
+    "企业出海官网设计",
+    "Next.js企业官网",
+    "外贸科技官网开发"
+],
   },
   {
     id: 'enterprise-rag-kb',
@@ -653,6 +678,16 @@ export const casesData: CaseItem[] = [  {
         { image: '/assets/cases/case-app.png', label: '移动端文档切片管理' },
       ],
     },
+    seoKeywords: [
+    "企业级知识库系统",
+    "私有化RAG系统开发",
+    "本地大模型知识库部署",
+    "企业AI知识问答",
+    "Dify私有化部署",
+    "Milvus向量检索",
+    "内网数据隔离AI问答",
+    "企业微信AI助手集成"
+],
   },
   {
     id: 'tech-mascot-ip',
@@ -706,6 +741,15 @@ export const casesData: CaseItem[] = [  {
         { image: '/assets/cases/case-mini.png', label: '小程序场景融入示意' },
       ],
     },
+    seoKeywords: [
+    "企业IP形象设计",
+    "科技品牌吉祥物设计",
+    "3D盲盒潮玩设计",
+    "AI辅助三视图设计",
+    "品牌视觉系统定制",
+    "品牌VI设计",
+    "文创周边衍生设计"
+],
   },
   {
     id: 'smart-retail-mini',
@@ -759,6 +803,14 @@ export const casesData: CaseItem[] = [  {
         { image: '/assets/cases/case-app.png', label: '预约选时与会员中心' },
       ],
     },
+    seoKeywords: [
+    "微信小程序定制开发",
+    "新零售商城小程序",
+    "社交电商小程序开发",
+    "小程序秒开性能优化",
+    "分销裂变商城开发",
+    "智能拼团小程序"
+],
   },
   {
     id: 'ai-customer-service',
@@ -812,6 +864,14 @@ export const casesData: CaseItem[] = [  {
         { image: '/assets/cases/case-mini.png', label: '企微端销售线索推送卡片' },
       ],
     },
+    seoKeywords: [
+    "AI智能客服系统",
+    "全天候售前售后AI客服",
+    "大模型智能客服外包",
+    "私有化智能客服搭建",
+    "意图识别话术拦截",
+    "多平台智能客服接入"
+],
   },
   {
     id: 'cross-platform-app',
@@ -865,6 +925,14 @@ export const casesData: CaseItem[] = [  {
         { image: '/assets/cases/case-web.png', label: '多设备云端同步管理' },
       ],
     },
+    seoKeywords: [
+    "跨平台App开发",
+    "React Native应用制作",
+    "Flutter跨端App开发",
+    "运动健康管理App",
+    "离线缓存离线优先App",
+    "iOS安卓双端交付"
+],
   },
 ];
 
