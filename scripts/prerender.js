@@ -30,6 +30,9 @@ function adjustAssetPaths(html, depth) {
   // 针对 assets
   res = res.replace(/(src|href)="(\.\/|\/)?assets\/([^"]*)"/g, `$1="${prefix}assets/$3"`);
 
+  // 针对 downloads
+  res = res.replace(/(src|href)="(\.\/|\/)?downloads\/([^"]*)"/g, `$1="${prefix}downloads/$3"`);
+
   return res;
 }
 

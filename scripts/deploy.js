@@ -49,8 +49,8 @@ async function deploy() {
   const remoteCmds = [
     `tar -xzf ${remoteTmp} -C ${CONFIG.remoteDir}/`,
     `rm -f ${remoteTmp}`,
-    `chown -R www:www ${CONFIG.remoteDir}/assets ${CONFIG.remoteDir}/case ${CONFIG.remoteDir}/*.html ${CONFIG.remoteDir}/*.png ${CONFIG.remoteDir}/*.txt ${CONFIG.remoteDir}/*.xml 2>/dev/null || true`,
-    `chmod -R 755 ${CONFIG.remoteDir}/assets ${CONFIG.remoteDir}/case ${CONFIG.remoteDir}/*.html ${CONFIG.remoteDir}/*.png ${CONFIG.remoteDir}/*.txt ${CONFIG.remoteDir}/*.xml 2>/dev/null || true`,
+    `chown -R www:www ${CONFIG.remoteDir}/assets ${CONFIG.remoteDir}/case ${CONFIG.remoteDir}/downloads ${CONFIG.remoteDir}/*.html ${CONFIG.remoteDir}/*.png ${CONFIG.remoteDir}/*.txt ${CONFIG.remoteDir}/*.xml 2>/dev/null || true`,
+    `chmod -R 755 ${CONFIG.remoteDir}/assets ${CONFIG.remoteDir}/case ${CONFIG.remoteDir}/downloads ${CONFIG.remoteDir}/*.html ${CONFIG.remoteDir}/*.png ${CONFIG.remoteDir}/*.txt ${CONFIG.remoteDir}/*.xml 2>/dev/null || true`,
   ].join(' && ');
 
   const sshCmd = `ssh -p ${CONFIG.port} -i "${CONFIG.keyPath}" -o StrictHostKeyChecking=no -o ConnectTimeout=15 ${CONFIG.user}@${CONFIG.host} "${remoteCmds}"`;
@@ -63,12 +63,13 @@ async function deploy() {
   }
 
   // 6. Verification
-  console.log('\n🔍 Verifying server response across multiple standalone HTML pages...');
+  console.log('\n🔍 Verifying server response across multiple standalone HTML pages and assets...');
   const testUrls = [
     'http://127.0.0.1/',
     'http://127.0.0.1/services.html',
     'http://127.0.0.1/portfolio.html',
     'http://127.0.0.1/case/phicomm-t1-hack.html',
+    'http://127.0.0.1/downloads/T1ZoomHelper.apk',
   ];
 
   try {

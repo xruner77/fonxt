@@ -55,6 +55,45 @@ export interface HardwareSpecItem {
   desc: string;
 }
 
+export interface SysfsParamItem {
+  name: string;
+  path: string;
+  defaultValue?: string;
+  recommendedValue?: string;
+  category: 'pq' | 'scaler' | 'hdmi' | 'window';
+  categoryLabel?: string;
+  effect: string;
+  command?: string;
+}
+
+export interface ParamExtractionInfo {
+  intro: string;
+  methodology: {
+    title: string;
+    desc: string;
+    technique: string;
+  }[];
+  keyParameters: SysfsParamItem[];
+  probeScriptCode?: StoryCodeSnippet;
+}
+
+export interface CaseDownloadItem {
+  title: string;
+  fileName: string;
+  fileSize: string;
+  version: string;
+  releaseDate: string;
+  downloadUrl: string;
+  md5: string;
+  sha256: string;
+  description: string;
+  features: string[];
+  installCommands: {
+    label: string;
+    cmd: string;
+  }[];
+}
+
 export interface CaseItem {
   id: string;
   title: string;
@@ -82,6 +121,8 @@ export interface CaseItem {
   storyChapters?: StoryChapter[];
   tutorialSteps?: TutorialStep[];
   hardwareSpecs?: HardwareSpecItem[];
+  paramExtraction?: ParamExtractionInfo;
+  downloadItem?: CaseDownloadItem;
 }
 
 export const caseCategories = [
@@ -91,7 +132,7 @@ export const caseCategories = [
   { id: 'ai', label: '⚡ AI应用与私有化落地' },
 ] as const;
 
-export const casesData: CaseItem[] = [    {
+export const casesData: CaseItem[] = [  {
     "id": "phicomm-t1-hack",
     "title": "拯救沉睡神机：斐讯 T1 (S912) 底层逆向与 4K HDR 极客影院固化实战",
     "category": "dev",
@@ -346,7 +387,166 @@ export const casesData: CaseItem[] = [    {
         "desc": "特别提醒：Kodi 播放普通的 16:9 片源时硬解原本完全稳定正常；去黑边只需手机点按 125% 硬件变焦即可。在 Kodi 的“视频设置”中，全局默认视图模式请务必保持为【正常 (Normal)】！",
         "warning": "千万切勿手滑将【拉伸 16:9】设为默认设置！否则以后打开任何标准的 16:9 电视剧或综艺时，画面都会被强行压扁变形！"
       }
-    ]
+    ],
+    "paramExtraction": {
+      "intro": "晶晨 S912 八核 64 位芯片在 Linux 内核层内置了庞大而精密的 VPP（Video Post Processor 视频后处理器）与画质色彩引擎（amvecm / amvideo）。然而，Android 上层应用框架与原厂设置仅暴露了极其粗糙的分辨率开关，导致大量硬核画质潜能被封印、老旧投影仪 HDR 严重发灰、2.35:1 宽银幕黑边无法消除。为此，我们建立了一套涵盖【内核 Sysfs 树探测】、【系统二进制反编译逆向】与【自动化探针框架】的三维参数提取与调校方法论：",
+      "methodology": [
+        {
+          "title": "1. 内核 Sysfs 命名空间地毯式枚举 (Sysfs Tree Probing)",
+          "desc": "深入 Linux 内核驱动在 /sys/module/am_vecm/parameters/（晶晨画质与色彩增强模块）、/sys/module/amvideo/parameters/（视频缩放流水线）、/sys/class/amhdmitx/（HDMI 发射控制器）以及 /sys/class/video/（视窗与变焦）下的所有底层接口。通过 ADB Shell 编写批处理探测脚本，测试每个节点的只读/可写权限与数值边界，捕获参数实时注入后显示输出的电平与画质响应。",
+          "technique": "Sysfs 枚举 · 权限测试 · 动态数值注入"
+        },
+        {
+          "title": "2. 系统总控守护进程与驱动反汇编 (Binary Disassembly & Symbol Tracing)",
+          "desc": "使用 Capstone 反汇编与字符串提取工具，深入逆向晶晨核心总控守护进程 /system/bin/systemcontrol 与硬件抽象层 libOmxVideo.so、hwcomposer.amlogic.so。通过逆向 JNI 映射与 IPC 通信，不仅理清了 dumpsys system_control -b set 是如何将参数持久化映射到 /dev/block/env（U-Boot ENV 分区），更挖掘出掌控 EDID 重协商的关键开关 is.bestmode，一举破解开机色深掉回 8bit 的底层根因。",
+          "technique": "Capstone ARM64 反汇编 · 符号交叉引用 · U-Boot ENV 映射"
+        },
+        {
+          "title": "3. 自动化探针体系与波形验证 (Automated Probing & Hardware Verification)",
+          "desc": "编写专用的 Python 自动化测试脚本（probe_parameters.py、probe_pq.py 等），建立一套可重复执行的探针套件。脚本自动下发并回读测试数据，结合 HDMI 信号分析与投影仪实际画面，精确验证了 DNLP 动态直方图对比度、Color Management 色彩管理、Dithering 抖动平滑、Super Scaler 超分辨率滤波与 125% 硬件变焦的实际生效链路。",
+          "technique": "Python 探针框架 · 自动化回读验证 · 零算力硬件直通"
+        }
+      ],
+      "keyParameters": [
+        {
+          "name": "dnlp_en",
+          "path": "/sys/module/am_vecm/parameters/dnlp_en",
+          "defaultValue": "0 (关闭)",
+          "recommendedValue": "1 (启用)",
+          "category": "pq",
+          "categoryLabel": "画质与色彩引擎 (amvecm)",
+          "effect": "晶晨硬件级 DNLP（Dynamic Non-linear Peak 动态非线性峰值）对比度增强。实时分析直方图压制高光死白并大幅提亮暗部细节，彻底根治投影仪 HDR 画质泛白发灰！",
+          "command": "echo 1 > /sys/module/am_vecm/parameters/dnlp_en"
+        },
+        {
+          "name": "dnlp_adj_level",
+          "path": "/sys/module/am_vecm/parameters/dnlp_adj_level",
+          "defaultValue": "0",
+          "recommendedValue": "12 ~ 16",
+          "category": "pq",
+          "categoryLabel": "画质与色彩引擎 (amvecm)",
+          "effect": "DNLP 动态对比度调节烈度（范围 0~32）。设为 14 可在大幅增强电影通透感的同时，完美保留人物肤色与暗场质感。",
+          "command": "echo 14 > /sys/module/am_vecm/parameters/dnlp_adj_level"
+        },
+        {
+          "name": "cm_en & cm_level",
+          "path": "/sys/module/am_vecm/parameters/cm_en",
+          "defaultValue": "0 (关闭)",
+          "recommendedValue": "1 (启用, level=2)",
+          "category": "pq",
+          "categoryLabel": "画质与色彩引擎 (amvecm)",
+          "effect": "Color Management 芯片硬件色彩管理引擎。提供高精度色相矫正与广色域保护，防止电影色彩过饱和溢出或饱和度不足。",
+          "command": "echo 1 > /sys/module/am_vecm/parameters/cm_en && echo 2 > /sys/module/am_vecm/parameters/cm_level"
+        },
+        {
+          "name": "vpp_dith_en & mode",
+          "path": "/sys/module/am_vecm/parameters/vpp_dith_en",
+          "defaultValue": "0 (关闭)",
+          "recommendedValue": "1 (模式 1/2)",
+          "category": "pq",
+          "categoryLabel": "画质与色彩引擎 (amvecm)",
+          "effect": "VPP 空间与时间混色抖动（Dithering）硬件引擎。在 10bit HDR 输入时消除天空、阴影等平滑过渡区域的色彩断层与色阶色带。",
+          "command": "echo 1 > /sys/module/am_vecm/parameters/vpp_dith_en && echo 1 > /sys/module/am_vecm/parameters/vpp_dith_mode"
+        },
+        {
+          "name": "range_control",
+          "path": "/sys/module/am_vecm/parameters/range_control",
+          "defaultValue": "0 (自动)",
+          "recommendedValue": "1 (Limited 16-235)",
+          "category": "pq",
+          "categoryLabel": "画质与色彩引擎 (amvecm)",
+          "effect": "HDMI 色彩动态范围映射控制。针对家用影院投影仪标准输入，精准锁定 16-235 视频级黑阶，告别暗场死黑或发灰。",
+          "command": "echo 1 > /sys/module/am_vecm/parameters/range_control"
+        },
+        {
+          "name": "super_scaler",
+          "path": "/sys/module/amvideo/parameters/super_scaler",
+          "defaultValue": "0 (关闭)",
+          "recommendedValue": "1 (启用)",
+          "category": "scaler",
+          "categoryLabel": "缩放与超分引擎 (amvideo)",
+          "effect": "晶晨 Super Scaler 硬件超分辨率边缘锐化与插值滤波算法。将 1080p 高码流片源在 4K 巨幕放映时大幅提升线条锐度与细节凝聚力。",
+          "command": "echo 1 > /sys/module/amvideo/parameters/super_scaler"
+        },
+        {
+          "name": "vert_chroma_filter_en",
+          "path": "/sys/module/amvideo/parameters/vert_chroma_filter_en",
+          "defaultValue": "0",
+          "recommendedValue": "1 (启用)",
+          "category": "scaler",
+          "categoryLabel": "缩放与超分引擎 (amvideo)",
+          "effect": "垂直色度抗锯齿滤波。消除 YUV420 隔行重采样带来的红色/蓝色高频边缘色度锯齿，字幕与高对比物体边缘更加细腻平滑。",
+          "command": "echo 1 > /sys/module/amvideo/parameters/vert_chroma_filter_en"
+        },
+        {
+          "name": "frac_rate_policy",
+          "path": "/sys/class/amhdmitx/amhdmitx0/frac_rate_policy",
+          "defaultValue": "0 (整数帧优先)",
+          "recommendedValue": "1 (分数帧优先)",
+          "category": "hdmi",
+          "categoryLabel": "HDMI 握手与输出 (amhdmitx)",
+          "effect": "分数刷新率智能跟随策略。自动精准锁定 23.976Hz 与 59.94Hz，根治 24 帧电影每 41 秒因时钟不同步强制跳 1 帧的微顿挫。",
+          "command": "echo 1 > /sys/class/amhdmitx/amhdmitx0/frac_rate_policy"
+        },
+        {
+          "name": "zoom (硬件变焦)",
+          "path": "/sys/class/video/zoom",
+          "defaultValue": "100 (100% 原始)",
+          "recommendedValue": "125 (放大 125%)",
+          "category": "window",
+          "categoryLabel": "VPP 视频视窗与变焦 (video)",
+          "effect": "晶晨 VPP 硬件数字变焦。位于硬解之后、HDMI 输出之前的独立硬件管线，0% CPU/GPU 占用将 2.35:1 电影无损切除上下黑边铺满整面 16:9 幕布！",
+          "command": "echo 125 > /sys/class/video/zoom"
+        },
+        {
+          "name": "screen_mode",
+          "path": "/sys/class/video/screen_mode",
+          "defaultValue": "0 (normal)",
+          "recommendedValue": "0 / 1 / 4",
+          "category": "window",
+          "categoryLabel": "VPP 视频视窗与变焦 (video)",
+          "effect": "画面宽高比硬件拉伸模式。0: 原比例居中；1: 全屏强制拉伸；4: 智能非线性拉伸（中间保真防人物变形，平缓拉伸两侧填满全屏）。",
+          "command": "echo 0 > /sys/class/video/screen_mode"
+        }
+      ],
+      "probeScriptCode": {
+        "lang": "python",
+        "code": "import os, subprocess\n\ndef probe_sysfs(name, path, test_val=None):\n    cur = subprocess.getoutput(f\"adb shell cat {path} 2>/dev/null\").strip()\n    print(f\"[PROBE] {name:24s} | Path: {path}\\n        Current Value: {cur}\")\n    if test_val is not None:\n        subprocess.run(f\"adb shell 'echo {test_val} > {path}'\", shell=True)\n        after = subprocess.getoutput(f\"adb shell cat {path} 2>/dev/null\").strip()\n        print(f\"        -> Injected '{test_val}': {after}\")\n\n# 1. 探测画质色彩引擎 amvecm\nprobe_sysfs(\"DNLP 对比度增强\", \"/sys/module/am_vecm/parameters/dnlp_en\", 1)\nprobe_sysfs(\"DNLP 调节级别\", \"/sys/module/am_vecm/parameters/dnlp_adj_level\", 14)\nprobe_sysfs(\"Color Management\", \"/sys/module/am_vecm/parameters/cm_en\", 1)\nprobe_sysfs(\"VPP Dithering 抖动\", \"/sys/module/am_vecm/parameters/vpp_dith_en\", 1)\n\n# 2. 探测超分缩放引擎 amvideo\nprobe_sysfs(\"Super Scaler 超分\", \"/sys/module/amvideo/parameters/super_scaler\", 1)\nprobe_sysfs(\"Chroma 垂直色度滤波\", \"/sys/module/amvideo/parameters/vert_chroma_filter_en\", 1)\n\n# 3. 探测 HDMI 刷新率与色彩深度\nprobe_sysfs(\"分数帧率策略\", \"/sys/class/amhdmitx/amhdmitx0/frac_rate_policy\", 1)\nprobe_sysfs(\"当前 HDMI 色彩属性\", \"/sys/class/amhdmitx/amhdmitx0/attr\")",
+        "note": "自研晶晨 S912 硬件底层寄存器与画质参数全自动探测套件核心逻辑"
+      }
+    },
+    "downloadItem": {
+      "title": "T1ZoomHelper 电视端画质与变焦自启微服务",
+      "fileName": "T1ZoomHelper.apk",
+      "fileSize": "22.8 KB",
+      "version": "v3.0 极客稳定版",
+      "releaseDate": "2026.03",
+      "downloadUrl": "/downloads/T1ZoomHelper.apk",
+      "md5": "F5E265842D83E83A1567BA7A2460EB9E",
+      "sha256": "624E7DAAA0891956D939DCED521C9CA921B9F8217F54FAEAD570B6E3988D5682",
+      "description": "专为斐讯 T1 盒子（晶晨 S912 芯片平台）量身打造的超轻量电视端常驻服务。利用本地环回 ADB 协议实现开机 1 秒免 Root 弹窗静默自启，0% 算力调用晶晨 VPP 硬件实现 125% 影院等比变焦，消除 2.35:1 宽银幕上下黑边；常驻 HTTP 微服务支持手机扫码即开 Web 遥控面板，实时调节 DNLP 画质去灰与色彩管理，打造极致顺滑的极客家庭影院。",
+      "features": [
+        "免电脑 · 开机 1 秒静默自启：通过 127.0.0.1:5555 本地环回 ADB 免密提权，电视无任何弹窗打扰",
+        "0% 算力硬件等比变焦：直通晶晨 VPP 协处理器 /sys/class/video/zoom，125% 满屏无损去黑边",
+        "晶晨 DNLP 画质去灰引擎：动态非线性对比度与直方图增强实时写入，告别投影泛白发灰",
+        "手机 Web 实时遥控中枢：内置 8989 端口轻量 HTTP 服务，同一局域网手机扫码即开调色盘",
+        "极致轻量零遮挡：安装包仅 23KB，纯原生 Java Socket，无任何多余依赖，内存占用仅 8MB"
+      ],
+      "installCommands": [
+        {
+          "label": "ADB 网络安装指令",
+          "cmd": "adb install -r T1ZoomHelper.apk"
+        },
+        {
+          "label": "首次静默拉起服务",
+          "cmd": "adb shell am start -n com.phicomm.t1zoom/.MainActivity"
+        },
+        {
+          "label": "手机访问遥控面板地址",
+          "cmd": "http://盒机局域网IP:8989"
+        }
+      ]
+    }
   },
 {
     id: 'ai-saas-portal',
