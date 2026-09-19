@@ -159,7 +159,7 @@ export const casesData: CaseItem[] = [
     client: '自研商业化 SaaS 平台 · 独立全栈作品',
     year: '2026',
     sidebarContactTip: 'AI 生图生视频与工作流系统定制',
-    coverImage: '/assets/cases/mg/mg-cover.png',
+    coverImage: '/assets/cases/mg/mg-cover.jpg',
     techStack: [
       'React 19 / Vite / TailwindCSS',
       'Three.js / @react-three/fiber (3D 相机机位控制)',
@@ -249,40 +249,40 @@ export const casesData: CaseItem[] = [
       },
     ],
     screenshots: {
-      pcImage: '/assets/cases/mg/mg-dashboard-overview.png',
+      pcImage: '/assets/cases/mg/mg-dashboard-overview.jpg',
       pcLabel: 'MagicGemini 创作总览仪表盘 · AI 创作成品画廊与敏捷创作中枢',
       displayMode: 'desktop',
       desktopImages: [
         {
-          image: '/assets/cases/mg/01-text-to-image.png',
+          image: '/assets/cases/mg/01-text-to-image.jpg',
           label: 'AI 创作室 · 文生图与图生图（多模型切换 / 1:1~21:9 多画幅 / 1K~4K 超高清无水印渲染）',
         },
         {
-          image: '/assets/cases/mg/02-video-generation.png',
+          image: '/assets/cases/mg/02-video-generation.jpg',
           label: 'AI 创作室 · 文生视频与首尾帧图生视频（Google Veo 3.1 渲染引擎 / 720p~1080p 流畅流式回放）',
         },
         {
-          image: '/assets/cases/mg/03-auto-studio-storyboard.png',
+          image: '/assets/cases/mg/03-auto-studio-storyboard.jpg',
           label: 'Auto Studio · 一键从创意到分镜视频（AI 导演助理剧本脑暴 / 场景运镜与台词音效多维解析）',
         },
         {
-          image: '/assets/cases/mg/04-character-consistency.png',
+          image: '/assets/cases/mg/04-character-consistency.jpg',
           label: '资产库 · 角色一致性锚定管理（三视图 FRONT/SIDE/BACK + 材质与道具特写，杜绝多分镜换脸）',
         },
         {
-          image: '/assets/cases/mg/05-storyboard-flow.png',
+          image: '/assets/cases/mg/05-storyboard-flow.jpg',
           label: 'Auto Studio · 智能分镜序列流扩展（连接前后分镜无缝过渡 / 新建场景镜头自由插入）',
         },
         {
-          image: '/assets/cases/mg/06-camera-angle-studio.png',
+          image: '/assets/cases/mg/06-camera-angle-studio.jpg',
           label: '相机工作室 (角度编辑器) · 3D 空间交互式机位控制（俯仰/偏航/缩放实时联动，批量多视角生成）',
         },
         {
-          image: '/assets/cases/mg/07-workflow-canvas.png',
+          image: '/assets/cases/mg/07-workflow-canvas.jpg',
           label: '工作流编排画布 · 可视化节点式 AI 流水线（文本输入-图像生图-视频生成-预设提示词编排）',
         },
         {
-          image: '/assets/cases/mg/mg-dashboard-overview.png',
+          image: '/assets/cases/mg/mg-dashboard-overview.jpg',
           label: '创作总览仪表盘 · 官方画廊作品展示与敏捷参数创作中枢',
         },
       ],

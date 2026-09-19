@@ -48,6 +48,7 @@ async function deploy() {
   // 4. Remote extract & set permissions
   const remoteCmds = [
     `rm -rf ${CONFIG.remoteDir}/case`,
+    `rm -rf ${CONFIG.remoteDir}/assets/cases/mg`,
     `tar -xzf ${remoteTmp} -C ${CONFIG.remoteDir}/`,
     `rm -f ${remoteTmp}`,
     `chown -R www:www ${CONFIG.remoteDir}/assets ${CONFIG.remoteDir}/case ${CONFIG.remoteDir}/downloads ${CONFIG.remoteDir}/*.html ${CONFIG.remoteDir}/*.png ${CONFIG.remoteDir}/*.txt ${CONFIG.remoteDir}/*.xml 2>/dev/null || true`,
@@ -73,6 +74,7 @@ async function deploy() {
     'http://127.0.0.1/case/phicomm-t1-hack.html',
     'http://127.0.0.1/case/bbt-photo-studio.html',
     'http://127.0.0.1/case/fhjy-tutoring-system.html',
+    'http://127.0.0.1/assets/cases/mg/mg-cover.jpg',
     'http://127.0.0.1/downloads/T1ZoomHelper.apk',
   ];
 
