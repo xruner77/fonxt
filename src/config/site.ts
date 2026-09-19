@@ -12,7 +12,7 @@ export const siteConfig = {
   subSlogan: '为企业与个人提供一站式数字化解决方案',
   wechatId: 'xane75',
   wechatQrCode: '/assets/personas/qrcode_wx.jpg',
-  email: 'contact@fonxt.com',
+  email: 'contactus@fonxt.com',
   location: '中国 · 远程全栈交付',
   status: '🟢 正在承接 2026 数字化定制需求',
 

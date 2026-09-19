@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { siteConfig } from '../../config/site';
 import { copyToClipboard } from '../../utils/clipboard';
-import { X, Copy, Check, MessageSquare, Send } from 'lucide-react';
+import { X, Copy, Check, MessageSquare, Mail } from 'lucide-react';
 import './ContactModal.css';
 
 interface ContactModalProps {
@@ -22,7 +22,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({
     name: '',
     contact: '',
     projectType: '全栈数字化产品定制',
-    budget: '5千~1.5万',
+    budget: '0 ~ 1,000 元',
     desc: '',
   });
 
@@ -65,18 +65,20 @@ export const ContactModal: React.FC<ContactModalProps> = ({
   const handleSubmitInquiry = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.contact.trim()) {
-      onShowToast('请留下您的微信或手机号，方便主理人联系您！');
+      onShowToast('请留下您的联系方式（微信或手机号），方便主理人联系您！');
       return;
     }
 
-    const summaryText = `【FONXT 项目咨询】\n姓名/称呼: ${formData.name || '未提供'}\n联系方式: ${formData.contact}\n项目类型: ${formData.projectType}\n预算范围: ${formData.budget}\n需求简述: ${formData.desc || '微信进一步详聊'}`;
+    const summaryText = `【FONXT 项目咨询单】\n姓名/称呼: ${formData.name || '未提供'}\n联系方式: ${formData.contact}\n项目类型: ${formData.projectType}\n预期预算: ${formData.budget}\n需求简述: ${formData.desc || '邮件进一步详聊'}`;
 
-    // 复制意向文本到剪贴板
+    // 复制需求文本到剪贴板作为备份
     copyToClipboard(summaryText);
-    onShowToast('已生成项目需求单并复制！请直接在微信中粘贴发送给主理人。');
+    onShowToast(`已调起邮件发送至 ${siteConfig.email}！内容已同时复制到剪贴板备用。`);
 
-    // 调起邮件客户端辅助
-    const mailUrl = `mailto:${siteConfig.email}?subject=项目咨询-${encodeURIComponent(formData.projectType)}&body=${encodeURIComponent(summaryText)}`;
+    // 调起本地邮件客户端发送邮件到 contactus@fonxt.com
+    const mailSubject = encodeURIComponent(`【项目咨询】${formData.projectType} - ${formData.name || formData.contact}`);
+    const mailBody = encodeURIComponent(summaryText);
+    const mailUrl = `mailto:${siteConfig.email}?subject=${mailSubject}&body=${mailBody}`;
     window.location.href = mailUrl;
   };
 
@@ -193,10 +195,9 @@ export const ContactModal: React.FC<ContactModalProps> = ({
                     value={formData.budget}
                     onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
                   >
-                    <option value="5千以内">5,000 元以内</option>
-                    <option value="5千~1.5万">5,000 ~ 15,000 元</option>
-                    <option value="1.5万~3万">15,000 ~ 30,000 元</option>
-                    <option value="3万以上">30,000 元以上</option>
+                    <option value="0 ~ 1,000 元">0 ~ 1,000 元（轻量咨询/快速打样）</option>
+                    <option value="1,000 ~ 10,000 元">1,000 ~ 10,000 元（常规模块/标准定制）</option>
+                    <option value="10,000 元以上">10,000 元以上（商业全案/深度定制）</option>
                   </select>
                 </div>
               </div>
@@ -211,9 +212,9 @@ export const ContactModal: React.FC<ContactModalProps> = ({
                 />
               </div>
 
-              <button type="submit" className="btn-submit-inquiry">
-                <Send size={16} />
-                <span>立即提交并复制意向单</span>
+              <button type="submit" className="btn-submit-inquiry" id="btn-submit-email">
+                <Mail size={16} />
+                <span>发邮件到 {siteConfig.email}</span>
               </button>
             </form>
           </div>
