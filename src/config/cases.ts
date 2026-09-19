@@ -249,7 +249,7 @@ export const casesData: CaseItem[] = [
       },
     ],
     screenshots: {
-      pcImage: '/assets/cases/mg/mg-cover.png',
+      pcImage: '/assets/cases/mg/mg-dashboard-overview.png',
       pcLabel: 'MagicGemini 创作总览仪表盘 · AI 创作成品画廊与敏捷创作中枢',
       displayMode: 'desktop',
       desktopImages: [
@@ -280,6 +280,10 @@ export const casesData: CaseItem[] = [
         {
           image: '/assets/cases/mg/07-workflow-canvas.png',
           label: '工作流编排画布 · 可视化节点式 AI 流水线（文本输入-图像生图-视频生成-预设提示词编排）',
+        },
+        {
+          image: '/assets/cases/mg/mg-dashboard-overview.png',
+          label: '创作总览仪表盘 · 官方画廊作品展示与敏捷参数创作中枢',
         },
       ],
     },
