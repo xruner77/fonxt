@@ -129,6 +129,12 @@ async function runPrerender() {
   const baseTemplate = fs.readFileSync(distHtmlPath, 'utf-8');
   const { render, casesData } = await import(pathToFileURL(serverEntryPath).href);
 
+  // 0. 清理历史案例目录，确保删除的模拟案例不遗留
+  const caseDistDir = path.resolve(distDir, 'case');
+  if (fs.existsSync(caseDistDir)) {
+    fs.rmSync(caseDistDir, { recursive: true, force: true });
+  }
+
   // 1. 定义全站核心独立页面配置列表
   const pages = [
     {
@@ -176,9 +182,9 @@ async function runPrerender() {
       outFile: path.resolve(distDir, 'portfolio.html'),
       depth: 0,
       meta: {
-        title: '商业精选作品与交付案例库 | FONXT',
-        description: '每个案例均来自于真实商业实战交付。涵盖底层嵌入式逆向、AI SaaS 门户、企业级 RAG 知识库、商业 IP 吉祥物、微信原生小程序与跨平台移动 App。',
-        keywords: '商业精选作品,数字化交付案例库,斐讯T1底层逆向,AI科技官网设计,企业RAG知识库,品牌IP吉祥物设计,微信零售小程序,跨平台运动健康App',
+        title: '商业实战作品与交付案例库 | FONXT',
+        description: '每一个案例均来自于真实商业实战交付。涵盖全模态 AI 生图生视频工作室、商业级微信原生小程序全栈开发与嵌入式 Linux 底层逆向调优实战。',
+        keywords: '商业实战案例,数字化交付案例库,MagicGemini,AI生图生视频,文生图4K,图生视频,斐讯T1底层逆向,BBT影楼管理系统,微信小程序开发',
         canonical: 'https://fonxt.com/portfolio.html',
         ogImage: 'https://fonxt.com/logo.png',
       },
@@ -224,7 +230,7 @@ async function runPrerender() {
     },
   ];
 
-  // 2. 动态扫描加入所有 7 个案例独立页面
+  // 2. 动态扫描加入所有真实案例独立页面
   if (Array.isArray(casesData)) {
     for (const c of casesData) {
       const caseCanonical = `https://fonxt.com/case/${c.id}.html`;
@@ -237,6 +243,12 @@ async function runPrerender() {
 
       let caseTitle = `${c.title} | FONXT 精选案例`;
       let caseDesc = `${c.subtitle} - ${c.description.replace(/\n+/g, ' ').slice(0, 160)}`;
+
+      // 针对 magic-gemini 定制高点击搜索标题与摘要
+      if (c.id === 'magic-gemini') {
+        caseTitle = 'MagicGemini 影视级全模态 AI 创作中枢 | 文生图/图生视频/一键剧本转分镜/3D角度编辑器 | 注册送1000积分 | FONXT 精选案例';
+        caseDesc = '打通文生图、图生图、文生视频、图生视频、一键从创意到分镜视频(Auto Studio)、角色一致性三视图、3D空间机位角度编辑器与可视化节点工作流。注册即送1000积分，可做100张无水印4K超清大图及20个1080p高清视频。';
+      }
 
       // 针对 phicomm-t1-hack 定制高点击搜索标题与摘要
       if (c.id === 'phicomm-t1-hack') {
@@ -282,6 +294,23 @@ async function runPrerender() {
           'softwareVersion': c.downloadItem.version,
           'fileSize': c.downloadItem.fileSize,
           'description': c.downloadItem.description
+        });
+      }
+
+      if (c.id === 'magic-gemini') {
+        caseJsonLd['@graph'].push({
+          '@type': 'WebApplication',
+          'name': 'MagicGemini AI Storyboard Studio',
+          'applicationCategory': 'MultimediaApplication',
+          'operatingSystem': 'Web Browser',
+          'url': 'https://mg.fonxt.com',
+          'offers': {
+            '@type': 'Offer',
+            'price': '0',
+            'priceCurrency': 'CNY',
+            'description': '注册即送 1000 初始算力积分，可随心制作 100 张无水印 4K 超清大图及 20 个 1080p 视频'
+          },
+          'description': caseDesc
         });
       }
 

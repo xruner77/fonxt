@@ -1,0 +1,124 @@
+/* ==========================================================================
+   YET ANOTHER REACT LIGHTBOX - FONXT CUSTOM THEME & DRAG/PAN POLISH
+   ========================================================================== */
+
+:root {
+  --yarl__color_backdrop: rgba(8, 12, 22, 0.94);
+  --yarl__color_button: #f1f5f9;
+  --yarl__color_button_active: #38bdf8;
+  --yarl__color_button_disabled: rgba(148, 163, 184, 0.4);
+  --yarl__slide_title_color: #ffffff;
+  --yarl__slide_description_color: #94a3b8;
+  --yarl__thumbnails_thumbnail_border: 2px solid rgba(56, 189, 248, 0.25);
+  --yarl__thumbnails_thumbnail_active_border: 2px solid #0284c7;
+  --yarl__thumbnails_track_background: rgba(15, 23, 42, 0.85);
+}
+
+.yarl__root {
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  font-family: inherit;
+  z-index: 9999;
+}
+
+/* Smooth Navigation Buttons */
+.yarl__navigation_prev,
+.yarl__navigation_next {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  transition: all 0.25s ease;
+  margin: 0 16px;
+}
+
+.yarl__navigation_prev:hover,
+.yarl__navigation_next:hover {
+  background: rgba(2, 132, 199, 0.4);
+  border-color: rgba(56, 189, 248, 0.6);
+  color: #38bdf8;
+  transform: scale(1.08);
+  box-shadow: 0 0 20px rgba(2, 132, 199, 0.4);
+}
+
+/* Toolbar Buttons */
+.yarl__toolbar {
+  padding: 12px 20px;
+  gap: 8px;
+  background: linear-gradient(180deg, rgba(8, 12, 22, 0.8) 0%, transparent 100%);
+}
+
+.yarl__button {
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  padding: 8px;
+}
+
+.yarl__button:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #38bdf8;
+}
+
+/* Thumbnails Track */
+.yarl__thumbnails_container {
+  background: linear-gradient(0deg, rgba(8, 12, 22, 0.95) 0%, rgba(8, 12, 22, 0.7) 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 12px 0 16px;
+}
+
+.yarl__thumbnails_thumbnail {
+  border-radius: 10px;
+  overflow: hidden;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.yarl__thumbnails_thumbnail:hover {
+  transform: translateY(-2px);
+  border-color: rgba(56, 189, 248, 0.6);
+}
+
+.yarl__thumbnails_thumbnail_active {
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 16px rgba(2, 132, 199, 0.6);
+  transform: scale(1.05);
+}
+
+/* Captions Polish */
+.yarl__slide_title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #f8fafc;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+  margin-bottom: 4px;
+}
+
+.yarl__slide_description {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 100px;
+  padding: 4px 16px;
+  display: inline-block;
+  margin-top: 6px;
+  backdrop-filter: blur(8px);
+}
+
+/* Draggable Image Cursor Feedback */
+.yarl__slide_image {
+  cursor: grab;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.yarl__slide_image:active {
+  cursor: grabbing;
+}

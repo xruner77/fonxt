@@ -20,6 +20,8 @@ export interface CaseScreenshots {
   pcImage?: string;
   pcLabel?: string;
   mobileImages?: CaseScreenshotItem[];
+  desktopImages?: CaseScreenshotItem[];
+  displayMode?: 'mobile' | 'desktop' | 'dual';
 }
 
 export interface StoryCodeSnippet {
@@ -130,14 +132,159 @@ export interface CaseItem {
   paramExtraction?: ParamExtractionInfo;
   downloadItem?: CaseDownloadItem;
   sidebarContactTip?: string;
+  // 商业营销与试用特权扩展（可选）
+  trialOffer?: {
+    badge: string;
+    title: string;
+    desc: string;
+    linkText?: string;
+    linkUrl?: string;
+  };
 }
 
 export const caseCategories = [
   { id: 'all', label: '全部实战案例' },
+  { id: 'ai', label: '🤖 AI 全模态生图与视频' },
   { id: 'dev', label: '💻 商业全栈与底层逆向' },
 ] as const;
 
-export const casesData: CaseItem[] = [  {
+export const casesData: CaseItem[] = [
+  {
+    id: 'magic-gemini',
+    title: 'MagicGemini 影视级全模态 AI 创作中枢：从创意灵感到分镜视频的一站式影视级工作台',
+    category: 'ai',
+    categoryLabel: 'AI 全模态生图生视频 · 影视预演中枢',
+    subtitle: '文生图/图生图 · 文生视频/图生视频 · 剧本转分镜视效预演 · 角色一致性 · 3D 角度编辑器 · 可视化工作流',
+    description: '基于 Google Gemini 与 Veo 深度打造的商业化 AI 视效预演工作台（AI Storyboard Studio）。一站式打通“剧本脑暴 → 资产一致性绑定 → 结构化分镜设计 → 首尾帧运镜约束 → 批量视频渲染”全链路影视工业级闭环。独创基于 3D 空间拖拽的相机机位角度编辑器与可视化节点式工作流编排，彻底告别跨工具割裂切换与换脸失真。注册即送 1000 算力积分，可随心创作 100 张无水印 4K 超清大图与 20 个 1080p 电影级高清视频。',
+    client: '自研商业化 SaaS 平台 · 独立全栈作品',
+    year: '2026',
+    sidebarContactTip: 'AI 生图生视频与工作流系统定制',
+    coverImage: '/assets/cases/mg/mg-cover.png',
+    techStack: [
+      'React 19 / Vite / TailwindCSS',
+      'Three.js / @react-three/fiber (3D 相机机位控制)',
+      'Framer Motion 影视级交互动画',
+      'Gemini 1.5 / 2.0 / 3.1 多模态大模型矩阵',
+      'Google Veo 3.1 影视级视频生成模型',
+      'Node.js / Express / Prisma ORM',
+      'BullMQ / Redis 分布式生成任务队列',
+      'Sharp 高保真图像处理 & 媒体流式代理缓存',
+    ],
+    highlights: [
+      '零门槛极速上手：注册即送 1000 初始算力积分，可免费制作 100 张无水印 4K 超清大图及 20 个 1080p 电影级高清视频',
+      'Auto Studio 一键剧本转分镜：AI 导演助理对话脑暴，自动提取场景、景别、运镜轨迹、台词与音效，一键批量并发渲染分镜视频',
+      '全模态创作闭环：无缝覆盖文生图、图生图、文生视频与图生视频，支持首尾帧双关键画面锚定与真实物理运镜约束',
+      '3D 空间交互式角度编辑器：鼠标自由拖拽 3D 相机机位，俯仰、偏航与焦距实时同步，告别抽象提示词，批量精准输出多视角连贯图像',
+      '资产库角色与环境一致性锁定：为角色生成三视图与材质特写锚定图，全局解耦绑定，彻底解决大模型跨分镜换脸崩坏痛点',
+      '可视化节点式工作流流水线：自定义拖拽文本输入、图像生图、视频生成与输出节点，让复杂 AI 创作像流水线一样清晰可控',
+    ],
+    deliverables: [
+      'MagicGemini Web 端全模态创作工作台源码 (React 19 + Three.js + TailwindCSS)',
+      'Auto Studio 剧本智能结构化分镜提取与批量预演渲染流水线',
+      'Camera Studio 3D 交互式机位角度编辑器与透视空间控制器',
+      '分布式异步任务队列微服务 (BullMQ + Redis + Veo 3.1 / Gemini 3.1)',
+      '自适应多端响应式架构、媒体本地代理缓存与自动化计费退款中枢',
+    ],
+    trialOffer: {
+      badge: '🎁 新用户注册专属特权',
+      title: '注册即送 1000 初始算力积分',
+      desc: '零套路免绑卡，可随心制作 100 张无水印 4K 超清大图或 20 个 1080p 电影级高清视频，即开即用体验影视级预演全流程。',
+      linkText: '立即前往体验 mg.fonxt.com',
+      linkUrl: 'https://mg.fonxt.com',
+    },
+    tags: [
+      'AI文生图',
+      'AI生视频',
+      '图生视频',
+      '分镜预演',
+      '工作流编排',
+      '3D角度编辑器',
+      '角色一致性',
+      '注册送1000积分',
+    ],
+    seoKeywords: [
+      'MagicGemini',
+      'mg.fonxt.com',
+      'AI生图生视频平台',
+      '文生图4K无水印',
+      '图生视频首尾帧',
+      'AI剧本转分镜视频',
+      'Auto Studio分镜预演',
+      'AI相机机位角度编辑器',
+      '3D机位控制器',
+      '节点式AI工作流',
+      '角色一致性三视图',
+      'Google Veo视频生成',
+      'Gemini生图',
+      '注册送1000积分AI',
+    ],
+    projectTime: '2026.02',
+    visitUrl: 'https://mg.fonxt.com',
+    overview: {
+      narrative: '在当前主流的 AI 影视与创意制作中，创作者长期受困于两大痛点：一是【工具链割裂】，从剧本写作（ChatGPT）、概念绘图（Midjourney）、视频生成（Runway/Luma）到非编剪辑，创作者需在多款软件之间频繁导入导出，流程极度繁琐耗时；二是【一致性与可控性黑盒】，大模型跨镜头生成极易出现“主角变脸、服装漂移、场景风格割裂”，且仅凭抽象的文字提示词根本无法精准控制摄影机的景别、机位角度与运镜轨迹。\n\n针对影视工业的前期视觉预演（Previz）标准，我们打造了【MagicGemini】全模态 AI 创作中枢。平台以“剧本脑暴 → 资产绑定 → 结构化分镜 → 一致性控制 → 视频生成”为核心闭环：在 Auto Studio 中，AI 导演助理可与创作者共同脑暴剧本并一键提取带景别、运镜、台词与音效的结构化分镜；资产库通过生成角色三视图（FRONT/SIDE/BACK）与材质特写锁定视觉特征向量，彻底杜绝换脸；更开创性地自研了【3D 空间机位角度编辑器 (Camera Studio)】，通过鼠标在 3D 空间拖拽即可精准定义俯仰角与偏航视角，批量生成多机位镜头；并提供【可视化节点式工作流 (Workflow)】，让复杂的全模态流水线清晰可复用。\n\n为了让每位创作者都能零门槛体验影视级预演的魅力，平台特设普惠机制：【新用户注册即赠 1000 初始算力积分】，无套路免绑卡，足以支持创作者随心生成 100 张无水印 4K 超清大图或 20 个 1080p 电影级高清视频，以极致流畅的端到端体验赋能个人创作者与专业影视团队。',
+      target: '打通“剧本脑暴-资产锚定-分镜设计-3D机位调控-节点流水线-批量视频渲染”的影视级预演全闭环，攻克大模型换脸失真与跨工具割裂难题。',
+      audience: '独立导演与编剧、短视频与广告策划团队、游戏与动画前期概念设计团队、以及高追求的 AI 影视与视效发烧友。',
+      format: 'Web 端全模态创作工作台 (PC 桌面级高保真视窗) + 分布式异步高并发生成微服务集群',
+    },
+    designHighlights: [
+      {
+        title: '注册即送 1000 算力积分',
+        desc: '零门槛极速上手，注册即领 1000 积分，可制 100 张无水印 4K 超清大图及 20 个 1080p 电影级高清视频，体验影视级生成全链路。',
+        iconType: 'brand',
+      },
+      {
+        title: 'Auto Studio 一键剧本转分镜',
+        desc: 'AI 导演助理对话式剧本脑暴，秒级结构化提取场景、景别、运镜轨迹与台词音效，一键批量并发渲染首尾帧分镜视频。',
+        iconType: 'layout',
+      },
+      {
+        title: '3D 空间机位角度编辑器',
+        desc: '内置 Three.js 交互式 3D 相机视窗，鼠标自由拖拽机位俯仰与偏航角，告别抽象文字提示词，批量精准输出多视角连贯图像。',
+        iconType: 'visual',
+      },
+      {
+        title: '可视化节点流与角色一致性',
+        desc: '节点式编排输入、处理与渲染管线；配合角色三视图与材质特写锚定图，全局锁定特征向量，跨镜头绝不换脸。',
+        iconType: 'responsive',
+      },
+    ],
+    screenshots: {
+      pcImage: '/assets/cases/mg/mg-cover.png',
+      pcLabel: 'MagicGemini 创作总览仪表盘 · AI 创作成品画廊与敏捷创作中枢',
+      displayMode: 'desktop',
+      desktopImages: [
+        {
+          image: '/assets/cases/mg/01-text-to-image.png',
+          label: 'AI 创作室 · 文生图与图生图（多模型切换 / 1:1~21:9 多画幅 / 1K~4K 超高清无水印渲染）',
+        },
+        {
+          image: '/assets/cases/mg/02-video-generation.png',
+          label: 'AI 创作室 · 文生视频与首尾帧图生视频（Google Veo 3.1 渲染引擎 / 720p~1080p 流畅流式回放）',
+        },
+        {
+          image: '/assets/cases/mg/03-auto-studio-storyboard.png',
+          label: 'Auto Studio · 一键从创意到分镜视频（AI 导演助理剧本脑暴 / 场景运镜与台词音效多维解析）',
+        },
+        {
+          image: '/assets/cases/mg/04-character-consistency.png',
+          label: '资产库 · 角色一致性锚定管理（三视图 FRONT/SIDE/BACK + 材质与道具特写，杜绝多分镜换脸）',
+        },
+        {
+          image: '/assets/cases/mg/05-storyboard-flow.png',
+          label: 'Auto Studio · 智能分镜序列流扩展（连接前后分镜无缝过渡 / 新建场景镜头自由插入）',
+        },
+        {
+          image: '/assets/cases/mg/06-camera-angle-studio.png',
+          label: '相机工作室 (角度编辑器) · 3D 空间交互式机位控制（俯仰/偏航/缩放实时联动，批量多视角生成）',
+        },
+        {
+          image: '/assets/cases/mg/07-workflow-canvas.png',
+          label: '工作流编排画布 · 可视化节点式 AI 流水线（文本输入-图像生图-视频生成-预设提示词编排）',
+        },
+      ],
+    },
+  },
+  {
     "id": "phicomm-t1-hack",
     "title": "拯救沉睡神机：斐讯 T1 (S912) 底层逆向与 4K HDR 极客影院固化实战",
     "category": "dev",

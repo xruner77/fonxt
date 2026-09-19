@@ -25,8 +25,11 @@ import {
   Download,
   Sliders,
   ListFilter,
-  ShieldCheck
+  ShieldCheck,
+  ZoomIn,
+  ExternalLink
 } from 'lucide-react';
+import { ImageLightbox, LightboxImageItem } from './ImageLightbox';
 import './CaseDetail.css';
 
 interface CaseDetailProps {
@@ -48,6 +51,11 @@ export const CaseDetail: React.FC<CaseDetailProps> = ({
   const prevCase: CaseItem = casesData[(currentIndex - 1 + casesData.length) % casesData.length];
   const nextCase: CaseItem = casesData[(currentIndex + 1) % casesData.length];
 
+  const isFirstCase = currentIndex === 0;
+  const isLastCase = currentIndex === casesData.length - 1;
+  const prevSublabel = isFirstCase ? '上一篇 · 末篇案例' : '上一篇案例';
+  const nextSublabel = isLastCase ? '下一篇 · 回到首篇' : '下一篇案例';
+
   const [activeSectionId, setActiveSectionId] = useState<string>('case-overview');
   const [copiedSnippet, setCopiedSnippet] = useState<string | null>(null);
 
@@ -68,21 +76,24 @@ export const CaseDetail: React.FC<CaseDetailProps> = ({
       id: string;
       label: string;
       isSub?: boolean;
-    }> = [
-      { id: 'case-overview', label: '01 项目概述' },
-      { id: 'case-highlights', label: '02 核心亮点' },
-    ];
+    }> = [];
+
+    let mainIndex = 1;
+    const formatIdx = (idx: number) => (idx < 10 ? `0${idx}` : `${idx}`);
+
+    items.push({ id: 'case-overview', label: `${formatIdx(mainIndex++)} 项目概述` });
+    items.push({ id: 'case-highlights', label: `${formatIdx(mainIndex++)} 核心亮点` });
 
     if (currentCase.hardwareSpecs && currentCase.hardwareSpecs.length > 0) {
-      items.push({ id: 'case-specs', label: '03 芯片硬件架构' });
+      items.push({ id: 'case-specs', label: `${formatIdx(mainIndex++)} 芯片硬件架构` });
     }
 
     if (currentCase.paramExtraction) {
-      items.push({ id: 'case-params-extraction', label: '04 S912 参数提取思路' });
+      items.push({ id: 'case-params-extraction', label: `${formatIdx(mainIndex++)} S912 参数提取思路` });
     }
 
     if (currentCase.storyChapters && currentCase.storyChapters.length > 0) {
-      items.push({ id: 'case-story', label: '05 硬核破局五幕纪实' });
+      items.push({ id: 'case-story', label: `${formatIdx(mainIndex++)} 硬核破局五幕纪实` });
       currentCase.storyChapters.forEach((ch, idx) => {
         items.push({
           id: ch.id,
@@ -93,14 +104,17 @@ export const CaseDetail: React.FC<CaseDetailProps> = ({
     }
 
     if (currentCase.downloadItem) {
-      items.push({ id: 'case-downloads', label: '06 APK 工具下载与部署' });
+      items.push({ id: 'case-downloads', label: `${formatIdx(mainIndex++)} APK 工具下载与部署` });
     }
 
     if (currentCase.tutorialSteps && currentCase.tutorialSteps.length > 0) {
-      items.push({ id: 'case-tutorial', label: '07 保姆级实操调校教程' });
+      items.push({ id: 'case-tutorial', label: `${formatIdx(mainIndex++)} 保姆级实操调校教程` });
     }
 
-    items.push({ id: 'case-screenshots', label: '08 界面与终端实测截图' });
+    const screenshotsLabel = currentCase.id === 'phicomm-t1-hack' 
+      ? '界面与终端实测截图' 
+      : '界面效果与全屏相册';
+    items.push({ id: 'case-screenshots', label: `${formatIdx(mainIndex++)} ${screenshotsLabel}` });
 
     return items;
   }, [currentCase]);
@@ -198,6 +212,15 @@ export const CaseDetail: React.FC<CaseDetailProps> = ({
   const overviewTarget = currentCase.overview?.target || currentCase.highlights[0] || '提升品牌曝光，增强用户互动与转化效率。';
   const overviewAudience = currentCase.overview?.audience || `${currentCase.client} 用户、合作伙伴及目标采购群体。`;
   const overviewFormat = currentCase.overview?.format || 'PC 端 + 移动端（全端响应式设计）';
+  const sidebarContactTip = currentCase.sidebarContactTip || (
+    currentCase.category === 'ai' 
+      ? '企业 AI 解决方案定制' 
+      : currentCase.category === 'ip' 
+      ? '品牌 IP 形象全案定制' 
+      : currentCase.id === 'bbt-photo-studio'
+      ? '智能影楼与小程序定制'
+      : '商业系统全栈开发定制'
+  );
 
   const highlightsList = currentCase.designHighlights && currentCase.designHighlights.length === 4
     ? currentCase.designHighlights
@@ -226,10 +249,52 @@ export const CaseDetail: React.FC<CaseDetailProps> = ({
 
   const pcScreenshot = currentCase.screenshots?.pcImage || currentCase.coverImage;
   const pcLabel = currentCase.screenshots?.pcLabel || 'PC 端页面效果';
-  const mobileScreenshots = currentCase.screenshots?.mobileImages || [
-    { image: currentCase.coverImage, label: '移动端页面效果（首页）' },
-    { image: currentCase.coverImage, label: '移动端页面效果（核心界面）' },
-  ];
+  const desktopScreenshots = currentCase.screenshots?.desktopImages || [];
+  const isDesktopMode = currentCase.screenshots?.displayMode === 'desktop' || desktopScreenshots.length > 0;
+  const mobileScreenshots = currentCase.screenshots?.mobileImages || (
+    isDesktopMode ? [] : [
+      { image: currentCase.coverImage, label: '移动端页面效果（首页）' },
+      { image: currentCase.coverImage, label: '移动端页面效果（核心界面）' },
+    ]
+  );
+
+  // Full-screen interactive album / lightbox collection
+  const lightboxImages: LightboxImageItem[] = useMemo(() => {
+    const list: LightboxImageItem[] = [];
+    if (pcScreenshot) {
+      list.push({
+        src: pcScreenshot,
+        label: pcLabel || `${currentCase.title} - 电脑端主界面`,
+        categoryTag: isDesktopMode ? '4K 创作总览' : 'PC 桌面端',
+      });
+    }
+    if (isDesktopMode && desktopScreenshots.length > 0) {
+      desktopScreenshots.forEach((desk, idx) => {
+        list.push({
+          src: desk.image,
+          label: desk.label || `${currentCase.title} - 核心界面 ${idx + 1}`,
+          categoryTag: '全模态工作台',
+        });
+      });
+    } else {
+      mobileScreenshots.forEach((mob, idx) => {
+        list.push({
+          src: mob.image,
+          label: mob.label || `${currentCase.title} - 移动端界面 ${idx + 1}`,
+          categoryTag: '移动端真机',
+        });
+      });
+    }
+    return list;
+  }, [pcScreenshot, pcLabel, isDesktopMode, desktopScreenshots, mobileScreenshots, currentCase.title]);
+
+  const [lightboxOpen, setLightboxOpen] = useState<boolean>(false);
+  const [lightboxIndex, setLightboxIndex] = useState<number>(0);
+
+  const openLightbox = (index: number) => {
+    setLightboxIndex(index);
+    setLightboxOpen(true);
+  };
 
   return (
     <div 
@@ -246,7 +311,7 @@ export const CaseDetail: React.FC<CaseDetailProps> = ({
           {/* Top Navigation & Breadcrumbs */}
           <div className="case-detail-topbar">
             <a 
-              href="../portfolio.html" 
+              href="/portfolio.html" 
               className="btn-back-portfolio" 
               onClick={(e) => {
                 if (onBack) {
@@ -261,9 +326,9 @@ export const CaseDetail: React.FC<CaseDetailProps> = ({
             </a>
 
             <nav className="case-detail-breadcrumb" aria-label="Breadcrumb">
-              <a href="../index.html">首页</a>
+              <a href="/index.html">首页</a>
               <ChevronRight size={14} />
-              <a href="../portfolio.html">作品案例</a>
+              <a href="/portfolio.html">作品案例</a>
               <ChevronRight size={14} />
               <span className="breadcrumb-current">{currentCase.title}</span>
             </nav>
@@ -294,7 +359,20 @@ export const CaseDetail: React.FC<CaseDetailProps> = ({
                 <div className="hero-spec-item">
                   <Link2 size={15} className="spec-icon" />
                   <span className="spec-label">访问形式</span>
-                  <span className="spec-val">{visitUrl}</span>
+                  {visitUrl.startsWith('http') ? (
+                    <a
+                      href={visitUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="spec-val spec-link"
+                      title={`在新窗口访问 ${visitUrl}`}
+                    >
+                      <span>{visitUrl.replace(/^https?:\/\//, '')}</span>
+                      <ExternalLink size={12} className="inline-ext-icon" />
+                    </a>
+                  ) : (
+                    <span className="spec-val">{visitUrl}</span>
+                  )}
                 </div>
                 <div className="hero-spec-item">
                   <Building2 size={15} className="spec-icon" />
@@ -302,9 +380,34 @@ export const CaseDetail: React.FC<CaseDetailProps> = ({
                   <span className="spec-val">{currentCase.client}</span>
                 </div>
               </div>
+
+              {/* Special Trial Offer Card (if available) */}
+              {currentCase.trialOffer && (
+                <div className="hero-trial-banner">
+                  <div className="trial-banner-left">
+                    <div className="trial-badge-row">
+                      <span className="trial-badge-pill">{currentCase.trialOffer.badge}</span>
+                      <strong className="trial-title">{currentCase.trialOffer.title}</strong>
+                    </div>
+                    <p className="trial-desc">{currentCase.trialOffer.desc}</p>
+                  </div>
+                  {currentCase.trialOffer.linkUrl && (
+                    <a
+                      href={currentCase.trialOffer.linkUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-trial-action"
+                      title="立即注册体验 MagicGemini"
+                    >
+                      <span>{currentCase.trialOffer.linkText || '立即前往体验'}</span>
+                      <ExternalLink size={15} />
+                    </a>
+                  )}
+                </div>
+              )}
             </div>
 
-            {/* Hero 3D Stage Right (Desktop Monitor + Mobile Phone On Podium) */}
+            {/* Hero 3D Stage Right (Desktop Monitor + Mobile Phone or Floating Studio Window) */}
             <div className="hero-stage-right">
               {/* 3D Circular Podium Glass Surface */}
               <div className="stage-podium-platform">
@@ -313,7 +416,14 @@ export const CaseDetail: React.FC<CaseDetailProps> = ({
               </div>
 
               {/* Desktop Monitor Mockup */}
-              <div className="mockup-monitor">
+              <div 
+                className="mockup-monitor zoomable-hero-mockup"
+                onClick={() => openLightbox(0)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && openLightbox(0)}
+                title="点击全屏放大查看高清图"
+              >
                 <div className="monitor-bezel">
                   <div className="monitor-screen">
                     <img 
@@ -322,27 +432,81 @@ export const CaseDetail: React.FC<CaseDetailProps> = ({
                       loading="eager"
                     />
                     <div className="monitor-screen-gloss" />
+                    <div className="mockup-zoom-overlay">
+                      <span className="zoom-hint-pill">
+                        <ZoomIn size={14} />
+                        <span>点击全屏相册</span>
+                      </span>
+                    </div>
                   </div>
                 </div>
                 <div className="monitor-stand-neck" />
                 <div className="monitor-stand-base" />
               </div>
 
-              {/* Foreground Mobile Phone Mockup */}
-              <div className="mockup-phone-floating">
-                <div className="phone-chassis">
-                  <div className="phone-dynamic-island" />
-                  <div className="phone-screen">
-                    <img 
-                      src={mobileScreenshots[0]?.image || pcScreenshot} 
-                      alt={`${currentCase.title} 移动端展示`}
-                      loading="eager"
-                    />
-                    <div className="phone-screen-gloss" />
+              {/* Foreground Showcase: Desktop Float Window or Mobile Phone */}
+              {isDesktopMode && desktopScreenshots.length > 0 ? (
+                <div 
+                  className="mockup-desktop-floating zoomable-hero-mockup"
+                  onClick={() => openLightbox(pcScreenshot ? 3 : 2)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && openLightbox(pcScreenshot ? 3 : 2)}
+                  title="点击全屏放大查看工作台视图"
+                >
+                  <div className="desktop-float-window">
+                    <div className="float-window-bar">
+                      <div className="chrome-dots">
+                        <span className="dot dot-red" />
+                        <span className="dot dot-yellow" />
+                        <span className="dot dot-green" />
+                      </div>
+                      <span className="float-window-title">Auto Studio 视效预演</span>
+                    </div>
+                    <div className="float-window-body">
+                      <img 
+                        src={desktopScreenshots[2]?.image || desktopScreenshots[0]?.image} 
+                        alt={`${currentCase.title} 核心工作台`}
+                        loading="eager"
+                      />
+                      <div className="mockup-zoom-overlay">
+                        <span className="zoom-hint-pill">
+                          <ZoomIn size={12} />
+                          <span>展开全景</span>
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="phone-chin-bar" />
                 </div>
-              </div>
+              ) : (
+                <div 
+                  className="mockup-phone-floating zoomable-hero-mockup"
+                  onClick={() => openLightbox(pcScreenshot ? 1 : 0)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && openLightbox(pcScreenshot ? 1 : 0)}
+                  title="点击全屏放大查看移动端效果"
+                >
+                  <div className="phone-chassis">
+                    <div className="phone-dynamic-island" />
+                    <div className="phone-screen">
+                      <img 
+                        src={mobileScreenshots[0]?.image || pcScreenshot} 
+                        alt={`${currentCase.title} 移动端展示`}
+                        loading="eager"
+                      />
+                      <div className="phone-screen-gloss" />
+                      <div className="mockup-zoom-overlay">
+                        <span className="zoom-hint-pill">
+                          <ZoomIn size={12} />
+                          <span>放大</span>
+                        </span>
+                      </div>
+                    </div>
+                    <div className="phone-chin-bar" />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -399,8 +563,22 @@ export const CaseDetail: React.FC<CaseDetailProps> = ({
                 </div>
               )}
 
+              {currentCase.visitUrl?.startsWith('http') && (
+                <div className="sidebar-quick-visit">
+                  <a
+                    href={currentCase.visitUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-sidebar-visit"
+                  >
+                    <ExternalLink size={14} />
+                    <span>立即体验线上平台</span>
+                  </a>
+                </div>
+              )}
+
               <div className="sidebar-contact-box">
-                <span className="contact-box-tip">影院底层调优技术定制</span>
+                <span className="contact-box-tip">{sidebarContactTip}</span>
                 <button className="btn-sidebar-contact" onClick={onOpenContact}>
                   <MessageSquare size={13} />
                   <span>咨询项目主理人</span>
@@ -816,6 +994,20 @@ export const CaseDetail: React.FC<CaseDetailProps> = ({
                         <span className="btn-size-tag">({currentCase.downloadItem.fileSize})</span>
                       </a>
 
+                      {currentCase.downloadItem.secondaryDownloadUrl && (
+                        <a
+                          href={currentCase.downloadItem.secondaryDownloadUrl}
+                          download={currentCase.downloadItem.secondaryFileName || 'block_327225_patched.bin'}
+                          className="btn-download-secondary"
+                        >
+                          <ShieldCheck size={18} />
+                          <span>下载 {currentCase.downloadItem.secondaryFileName || '微创补丁块'}</span>
+                          {currentCase.downloadItem.secondaryFileSize && (
+                            <span className="btn-size-tag">({currentCase.downloadItem.secondaryFileSize})</span>
+                          )}
+                        </a>
+                      )}
+
                       <button
                         className="btn-copy-direct-link"
                         onClick={() => {
@@ -892,6 +1084,24 @@ export const CaseDetail: React.FC<CaseDetailProps> = ({
 
                       <p className="step-description">{step.desc}</p>
 
+                      {step.image && (
+                        <div className="step-image-showcase">
+                          <div className="step-image-frame">
+                            <img 
+                              src={step.image} 
+                              alt={step.imageCaption || step.title} 
+                              loading="lazy" 
+                            />
+                          </div>
+                          {step.imageCaption && (
+                            <div className="step-image-caption">
+                              <ImageIcon size={13} className="step-caption-icon" />
+                              <span>{step.imageCaption}</span>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
                       {step.command && (
                         <div className="step-command-box">
                           <div className="command-header">
@@ -928,7 +1138,15 @@ export const CaseDetail: React.FC<CaseDetailProps> = ({
                           <Wrench size={15} className="tip-icon" />
                           <div className="tip-content">
                             <strong>极客提示：</strong>
-                            {step.tip}
+                            {step.tip.includes('\n') ? (
+                              <div className="tip-multiline">
+                                {step.tip.split('\n').map((line, lIdx) => (
+                                  <p key={lIdx} className="tip-line">{line}</p>
+                                ))}
+                              </div>
+                            ) : (
+                              step.tip
+                            )}
                           </div>
                         </div>
                       )}
@@ -952,58 +1170,240 @@ export const CaseDetail: React.FC<CaseDetailProps> = ({
                 4. SECTION: | 页面截图 PAGE SCREENSHOTS
                ========================================================================= */}
             <section id="case-screenshots" className="case-screenshots-section">
-              <div className="section-title-bar">
-                <span className="section-bar-accent" />
-                <h2 className="section-title-cn">页面截图</h2>
-                <span className="section-title-en">PAGE SCREENSHOTS</span>
+              <div className="section-title-bar screenshots-title-bar">
+                <div className="title-left">
+                  <span className="section-bar-accent" />
+                  <h2 className="section-title-cn">
+                    {isDesktopMode ? '工作台界面矩阵与高清相册' : currentCase.id === 'phicomm-t1-hack' ? '界面与终端实测截图' : '界面效果与全屏相册'}
+                  </h2>
+                  <span className="section-title-en">GALLERY & WORKSPACE</span>
+                </div>
+                <button 
+                  type="button"
+                  className="btn-open-gallery-album"
+                  onClick={() => openLightbox(0)}
+                  title="点击打开全屏高清相册预览"
+                  aria-label="打开全屏相册"
+                >
+                  <ZoomIn size={15} />
+                  <span>浏览高清相册 ({lightboxImages.length})</span>
+                </button>
               </div>
 
-              <div className="screenshots-showcase-grid">
-                {/* Left: PC Desktop Browser Showcase */}
-                <div className="pc-screenshot-container">
-                  <div className="pc-browser-mockup">
-                    <div className="browser-chrome-bar">
-                      <div className="chrome-dots">
-                        <span className="dot dot-red" />
-                        <span className="dot dot-yellow" />
-                        <span className="dot dot-green" />
+              {isDesktopMode ? (
+                /* Desktop Full-Feature Workspace Matrix */
+                <div className="desktop-workspace-showcase">
+                  {/* Featured Primary View */}
+                  <div className="desktop-feature-browser">
+                    <div 
+                      className="pc-browser-mockup zoomable-mockup"
+                      onClick={() => openLightbox(0)}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && openLightbox(0)}
+                      title="点击放大查看全屏画质相册"
+                    >
+                      <div className="browser-chrome-bar">
+                        <div className="chrome-dots">
+                          <span className="dot dot-red" />
+                          <span className="dot dot-yellow" />
+                          <span className="dot dot-green" />
+                        </div>
+                        <div className="chrome-address">
+                          <span>{currentCase.visitUrl || 'https://mg.fonxt.com'}</span>
+                        </div>
                       </div>
-                      <div className="chrome-address">
-                        <span>https://fonxt.com/cases/{currentCase.id}</span>
+                      <div className="browser-viewport">
+                        <img 
+                          src={pcScreenshot} 
+                          alt={pcLabel}
+                          loading="lazy"
+                        />
+                        <div className="mockup-zoom-overlay">
+                          <span className="zoom-hint-pill">
+                            <ZoomIn size={14} />
+                            <span>全屏高清相册</span>
+                          </span>
+                        </div>
                       </div>
                     </div>
-                    <div className="browser-viewport">
-                      <img 
-                        src={pcScreenshot} 
-                        alt={pcLabel}
-                        loading="lazy"
-                      />
-                    </div>
+                    <p className="screenshot-caption">{pcLabel}</p>
                   </div>
-                  <p className="screenshot-caption">{pcLabel}</p>
-                </div>
 
-                {/* Right: Dual Mobile Phones Showcase */}
-                <div className="mobile-screenshots-container">
-                  {mobileScreenshots.slice(0, 2).map((mob, idx) => (
-                    <div key={idx} className="mobile-screenshot-item">
-                      <div className="phone-device-mockup">
-                        <div className="phone-device-inner">
-                          <div className="phone-island-notch" />
-                          <div className="phone-viewport">
-                            <img 
-                              src={mob.image} 
-                              alt={mob.label}
-                              loading="lazy"
-                            />
+                  {/* Extended Desktop Browser Cards Grid */}
+                  {desktopScreenshots.length > 0 && (
+                    <div className="desktop-extended-grid">
+                      {desktopScreenshots.map((desk, dIdx) => (
+                        <div key={dIdx} className="desktop-extended-card">
+                          <div 
+                            className="desktop-card-browser zoomable-mockup"
+                            onClick={() => openLightbox(dIdx + 1)}
+                            role="button"
+                            tabIndex={0}
+                            onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && openLightbox(dIdx + 1)}
+                            title="点击放大查看高清相册"
+                          >
+                            <div className="browser-chrome-bar mini-chrome">
+                              <div className="chrome-dots">
+                                <span className="dot dot-red" />
+                                <span className="dot dot-yellow" />
+                                <span className="dot dot-green" />
+                              </div>
+                              <div className="chrome-address">
+                                <span>https://mg.fonxt.com/studio/{dIdx + 1}</span>
+                              </div>
+                            </div>
+                            <div className="desktop-card-viewport">
+                              <img 
+                                src={desk.image} 
+                                alt={desk.label}
+                                loading="lazy"
+                              />
+                              <div className="mockup-zoom-overlay">
+                                <span className="zoom-hint-pill">
+                                  <ZoomIn size={12} />
+                                  <span>放大</span>
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="desktop-card-meta">
+                            <span className="card-meta-idx"># 0{dIdx + 1}</span>
+                            <p className="desktop-card-caption">{desk.label}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <>
+                  <div className="screenshots-showcase-grid">
+                    {/* Left: PC Desktop Browser Showcase */}
+                    <div className="pc-screenshot-container">
+                      <div 
+                        className="pc-browser-mockup zoomable-mockup"
+                        onClick={() => openLightbox(0)}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && openLightbox(0)}
+                        title="点击放大查看全屏画质相册"
+                      >
+                        <div className="browser-chrome-bar">
+                          <div className="chrome-dots">
+                            <span className="dot dot-red" />
+                            <span className="dot dot-yellow" />
+                            <span className="dot dot-green" />
+                          </div>
+                          <div className="chrome-address">
+                            <span>https://fonxt.com/cases/{currentCase.id}</span>
+                          </div>
+                        </div>
+                        <div className="browser-viewport">
+                          <img 
+                            src={pcScreenshot} 
+                            alt={pcLabel}
+                            loading="lazy"
+                          />
+                          <div className="mockup-zoom-overlay">
+                            <span className="zoom-hint-pill">
+                              <ZoomIn size={14} />
+                              <span>全屏画质相册</span>
+                            </span>
                           </div>
                         </div>
                       </div>
-                      <p className="screenshot-caption">{mob.label}</p>
+                      <p className="screenshot-caption">{pcLabel}</p>
                     </div>
-                  ))}
-                </div>
-              </div>
+
+                    {/* Right: Dual Mobile Phones Showcase */}
+                    <div className="mobile-screenshots-container">
+                      {mobileScreenshots.slice(0, 2).map((mob, idx) => {
+                        const globalIdx = pcScreenshot ? idx + 1 : idx;
+                        return (
+                          <div key={idx} className="mobile-screenshot-item">
+                            <div 
+                              className="phone-device-mockup zoomable-mockup"
+                              onClick={() => openLightbox(globalIdx)}
+                              role="button"
+                              tabIndex={0}
+                              onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && openLightbox(globalIdx)}
+                              title="点击放大查看高清相册"
+                            >
+                              <div className="phone-device-inner">
+                                <div className="phone-island-notch" />
+                                <div className="phone-viewport">
+                                  <img 
+                                    src={mob.image} 
+                                    alt={mob.label}
+                                    loading="lazy"
+                                  />
+                                  <div className="mockup-zoom-overlay">
+                                    <span className="zoom-hint-pill">
+                                      <ZoomIn size={13} />
+                                      <span>点击放大</span>
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <p className="screenshot-caption">{mob.label}</p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Extended Mobile Gallery (when more than 2 mobile screenshots exist) */}
+                  {mobileScreenshots.length > 2 && (
+                    <div className="mobile-extended-gallery-wrap">
+                      <div className="extended-gallery-header">
+                        <div className="gallery-header-left">
+                          <Smartphone size={18} className="gallery-header-icon" />
+                          <h3 className="gallery-header-title">移动端核心功能界面全景（客户端与管理端双端闭环）</h3>
+                        </div>
+                        <span className="gallery-header-badge">共 {mobileScreenshots.length} 个功能界面实测</span>
+                      </div>
+
+                      <div className="mobile-extended-grid">
+                        {mobileScreenshots.slice(2).map((mob, mIdx) => {
+                          const globalIdx = pcScreenshot ? mIdx + 3 : mIdx + 2;
+                          return (
+                            <div key={mIdx} className="extended-mobile-card">
+                              <div 
+                                className="phone-device-mockup mini-mockup zoomable-mockup"
+                                onClick={() => openLightbox(globalIdx)}
+                                role="button"
+                                tabIndex={0}
+                                onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && openLightbox(globalIdx)}
+                                title="点击放大查看高清相册"
+                              >
+                                <div className="phone-device-inner">
+                                  <div className="phone-island-notch" />
+                                  <div className="phone-viewport">
+                                    <img 
+                                      src={mob.image} 
+                                      alt={mob.label} 
+                                      loading="lazy" 
+                                    />
+                                    <div className="mockup-zoom-overlay">
+                                      <span className="zoom-hint-pill">
+                                        <ZoomIn size={12} />
+                                        <span>放大</span>
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <p className="screenshot-caption">{mob.label}</p>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
             </section>
 
             {/* =========================================================================
@@ -1031,38 +1431,40 @@ export const CaseDetail: React.FC<CaseDetailProps> = ({
             {/* Previous & Next Case Pagination */}
             <div className="case-pagination-grid">
               <a 
-                href={`./${prevCase.id}.html`}
+                href={`/case/${prevCase.id}.html`}
                 className="nav-case-card prev"
+                title={prevCase.title}
                 onClick={(e) => {
                   if (onSelectCase) {
                     e.preventDefault();
                     onSelectCase(prevCase.id);
                   }
                 }}
-                aria-label={`上一篇案例: ${prevCase.title}`}
+                aria-label={`${prevSublabel}: ${prevCase.title}`}
               >
                 <div className="nav-arrow-circle">
                   <ArrowLeft size={18} />
                 </div>
                 <div className="nav-case-info">
-                  <span className="nav-case-sublabel">上一篇案例</span>
+                  <span className="nav-case-sublabel">{prevSublabel}</span>
                   <span className="nav-case-title">{prevCase.title}</span>
                 </div>
               </a>
 
               <a 
-                href={`./${nextCase.id}.html`}
+                href={`/case/${nextCase.id}.html`}
                 className="nav-case-card next"
+                title={nextCase.title}
                 onClick={(e) => {
                   if (onSelectCase) {
                     e.preventDefault();
                     onSelectCase(nextCase.id);
                   }
                 }}
-                aria-label={`下一篇案例: ${nextCase.title}`}
+                aria-label={`${nextSublabel}: ${nextCase.title}`}
               >
                 <div className="nav-case-info">
-                  <span className="nav-case-sublabel">下一篇案例</span>
+                  <span className="nav-case-sublabel">{nextSublabel}</span>
                   <span className="nav-case-title">{nextCase.title}</span>
                 </div>
                 <div className="nav-arrow-circle">
@@ -1073,6 +1475,15 @@ export const CaseDetail: React.FC<CaseDetailProps> = ({
           </main>
         </div>
       </div>
+
+      {/* Fullscreen Interactive Lightbox / Album */}
+      <ImageLightbox
+        isOpen={lightboxOpen}
+        images={lightboxImages}
+        currentIndex={lightboxIndex}
+        onClose={() => setLightboxOpen(false)}
+        onIndexChange={(idx) => setLightboxIndex(idx)}
+      />
     </div>
   );
 };

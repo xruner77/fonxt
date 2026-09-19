@@ -112,6 +112,50 @@
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
 }
 
+.case-trial-ribbon {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, #7c3aed, #0284c7);
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.35);
+  letter-spacing: 0.02em;
+}
+
+.case-card-trial-callout {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.07) 0%, rgba(2, 132, 199, 0.09) 100%);
+  border: 1px solid rgba(124, 58, 237, 0.18);
+  margin-bottom: var(--space-3);
+}
+
+.trial-callout-badge {
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #7c3aed;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+.trial-callout-text {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #4338ca;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .case-card-body {
   padding: var(--space-5);
   display: flex;
