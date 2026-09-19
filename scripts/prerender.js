@@ -265,6 +265,7 @@ async function runPrerender() {
             'headline': c.title,
             'description': caseDesc,
             'url': caseCanonical,
+            'image': caseCover,
             'inLanguage': 'zh-CN',
             'datePublished': `${c.year}-01-01`,
             'author': {
