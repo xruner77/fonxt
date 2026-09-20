@@ -27,9 +27,11 @@ import {
   ListFilter,
   ShieldCheck,
   ZoomIn,
-  ExternalLink
+  ExternalLink,
+  Eye
 } from 'lucide-react';
 import { ImageLightbox, LightboxImageItem } from './ImageLightbox';
+import { CaseComments } from './CaseComments';
 import './CaseDetail.css';
 
 interface CaseDetailProps {
@@ -58,6 +60,44 @@ export const CaseDetail: React.FC<CaseDetailProps> = ({
 
   const [activeSectionId, setActiveSectionId] = useState<string>('case-overview');
   const [copiedSnippet, setCopiedSnippet] = useState<string | null>(null);
+  const [viewsCount, setViewsCount] = useState<number | null>(null);
+  const [viewsLoading, setViewsLoading] = useState<boolean>(true);
+
+  // Fetch and increment page views for this case
+  useEffect(() => {
+    let isMounted = true;
+    setViewsLoading(true);
+
+    fetch('/api/views.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ slug: currentCase.id }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (isMounted && data.success && typeof data.count === 'number') {
+          setViewsCount(data.count);
+        }
+      })
+      .catch(() => {
+        // Fallback to GET request
+        fetch(`/api/views.php?slug=${encodeURIComponent(currentCase.id)}`)
+          .then((res) => res.json())
+          .then((data) => {
+            if (isMounted && data.success && typeof data.count === 'number') {
+              setViewsCount(data.count);
+            }
+          })
+          .catch(() => {});
+      })
+      .finally(() => {
+        if (isMounted) setViewsLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [currentCase.id]);
 
   const handleCopySnippet = (text: string) => {
     if (typeof navigator !== 'undefined' && navigator.clipboard) {
@@ -115,6 +155,8 @@ export const CaseDetail: React.FC<CaseDetailProps> = ({
       ? '界面与终端实测截图' 
       : '界面效果与全屏相册';
     items.push({ id: 'case-screenshots', label: `${formatIdx(mainIndex++)} ${screenshotsLabel}` });
+
+    items.push({ id: 'case-comments', label: `${formatIdx(mainIndex++)} 访客讨论与留言` });
 
     return items;
   }, [currentCase]);
@@ -378,6 +420,13 @@ export const CaseDetail: React.FC<CaseDetailProps> = ({
                   <Building2 size={15} className="spec-icon" />
                   <span className="spec-label">客户主体</span>
                   <span className="spec-val">{currentCase.client}</span>
+                </div>
+                <div className="hero-spec-item">
+                  <Eye size={15} className="spec-icon" />
+                  <span className="spec-label">浏览热度</span>
+                  <span className="spec-val">
+                    {viewsLoading ? '...' : `${(viewsCount ?? 1).toLocaleString()} 次浏览`}
+                  </span>
                 </div>
               </div>
 
@@ -1427,6 +1476,9 @@ export const CaseDetail: React.FC<CaseDetailProps> = ({
                 </button>
               </div>
             </div>
+
+            {/* Comments and Discussion */}
+            <CaseComments slug={currentCase.id} caseTitle={currentCase.title} />
 
             {/* Previous & Next Case Pagination */}
             <div className="case-pagination-grid">

@@ -20,6 +20,8 @@ dist-ssr/
 .env
 .env.local
 .env.*.local
+config.local.php
+*secrets.php
 
 # Editor & OS files
 .vscode/

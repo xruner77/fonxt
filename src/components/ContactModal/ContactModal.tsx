@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { siteConfig } from '../../config/site';
 import { copyToClipboard } from '../../utils/clipboard';
-import { X, Copy, Check, MessageSquare, Mail } from 'lucide-react';
+import { X, Copy, Check, MessageSquare, Send, Loader2 } from 'lucide-react';
 import './ContactModal.css';
 
 interface ContactModalProps {
@@ -18,6 +18,8 @@ export const ContactModal: React.FC<ContactModalProps> = ({
   isSubdir = false,
 }) => {
   const [copied, setCopied] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [honeypot, setHoneypot] = useState('');
   const [formData, setFormData] = useState({
     name: '',
     contact: '',
@@ -62,7 +64,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({
     }
   };
 
-  const handleSubmitInquiry = (e: React.FormEvent) => {
+  const handleSubmitInquiry = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.contact.trim()) {
       onShowToast('请留下您的联系方式（微信或手机号），方便主理人联系您！');
@@ -71,11 +73,41 @@ export const ContactModal: React.FC<ContactModalProps> = ({
 
     const summaryText = `【FONXT 项目咨询单】\n姓名/称呼: ${formData.name || '未提供'}\n联系方式: ${formData.contact}\n项目类型: ${formData.projectType}\n预期预算: ${formData.budget}\n需求简述: ${formData.desc || '邮件进一步详聊'}`;
 
-    // 复制需求文本到剪贴板作为备份
+    setSubmitting(true);
+
+    try {
+      const res = await fetch('/api/contact.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          contact: formData.contact,
+          projectType: formData.projectType,
+          budget: formData.budget,
+          desc: formData.desc,
+          website_hp: honeypot,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        onShowToast('🎉 ' + (data.message || '项目咨询已送达主理人邮箱，将在 2 小时内与您联系！'));
+        copyToClipboard(summaryText);
+        setTimeout(() => {
+          onClose();
+        }, 1800);
+        return;
+      }
+    } catch {
+      // If network fails, fallback to local mailto
+    } finally {
+      setSubmitting(false);
+    }
+
+    // 降级：复制需求文本到剪贴板并调起本地邮件客户端
     copyToClipboard(summaryText);
     onShowToast(`已调起邮件发送至 ${siteConfig.email}！内容已同时复制到剪贴板备用。`);
-
-    // 调起本地邮件客户端发送邮件到 contactus@fonxt.com
     const mailSubject = encodeURIComponent(`【项目咨询】${formData.projectType} - ${formData.name || formData.contact}`);
     const mailBody = encodeURIComponent(summaryText);
     const mailUrl = `mailto:${siteConfig.email}?subject=${mailSubject}&body=${mailBody}`;
@@ -212,9 +244,33 @@ export const ContactModal: React.FC<ContactModalProps> = ({
                 />
               </div>
 
-              <button type="submit" className="btn-submit-inquiry" id="btn-submit-email">
-                <Mail size={16} />
-                <span>发邮件到 {siteConfig.email}</span>
+              {/* Honeypot for spam bots */}
+              <input
+                type="text"
+                value={honeypot}
+                onChange={(e) => setHoneypot(e.target.value)}
+                style={{ display: 'none' }}
+                tabIndex={-1}
+                autoComplete="off"
+              />
+
+              <button 
+                type="submit" 
+                className="btn-submit-inquiry" 
+                id="btn-submit-email"
+                disabled={submitting}
+              >
+                {submitting ? (
+                  <>
+                    <Loader2 size={16} className="animate-spin" />
+                    <span>正在投递咨询单...</span>
+                  </>
+                ) : (
+                  <>
+                    <Send size={16} />
+                    <span>立即提交项目意向（直达主理人邮箱）</span>
+                  </>
+                )}
               </button>
             </form>
           </div>
