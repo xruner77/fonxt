@@ -15,6 +15,7 @@ dist/
 dist-ssr/
 *.tar.gz
 *.zip
+!public/downloads/*.zip
 
 # Local env files
 .env

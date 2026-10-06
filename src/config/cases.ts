@@ -99,6 +99,12 @@ export interface CaseDownloadItem {
   secondaryDownloadUrl?: string;
   secondaryFileName?: string;
   secondaryFileSize?: string;
+  contributorAcknowledgement?: {
+    author: string;
+    source: string;
+    description: string;
+  };
+  kodiNotice?: string;
 }
 
 export interface CaseItem {
@@ -311,15 +317,15 @@ export const casesData: CaseItem[] = [
     ],
     "highlights": [
       "开机永久锁死 4K 60Hz 10bit HDR 输出（阻断 BenQ TK700 投影仪 EDID 降级）",
-      "物理闪存无损打入 Seccomp 热补丁，根除 MediaCodec 硬件加速沙箱崩溃",
-      "0% 算力调用晶晨 VPP 硬件变焦，联动 Kodi 消除 2.35:1 宽银幕黑边",
+      "全固件自适应 Ext4 物理扇区逆向热补丁，根除 MediaCodec 硬件加速沙箱崩溃（恩山论坛网友 @kloved1314 协助联合优化）",
+      "0% 算力调用晶晨 VPP 硬件变焦，联动 Kodi 消除 2.35:1 宽银幕黑边（变焦与调色仅在 Kodi 播放器中有效）",
       "环回本地 ADB 协议获取 UID 2000，免 Root 弹窗与免刷机系统控制"
     ],
     "deliverables": [
-      "斐讯 T1 闪存固化与热补丁完整脚本集",
+      "斐讯T1_全固件自适应硬解修复工具包.zip（内置一键自适应打补丁.bat 与 T1_Seccomp_Patcher.exe，支持所有带 Root 固件）",
       "T1ZoomHelper.apk (v3.0) 电视端画质自启微服务",
       "PC 批处理工具 set_video_zoom.bat 与 lock_4k60hz_10bit.bat",
-      "完整的底层崩溃诊断与物理扇区计算逆向手记"
+      "完整的底层崩溃诊断、动态 Ext4 扇区逆向解算与 Kodi 专属调校手记"
     ],
     "tags": [
       "底层逆向",
@@ -336,7 +342,10 @@ export const casesData: CaseItem[] = [
       "明基TK700 8bit降级",
       "Kodi硬解失效卡顿",
       "Kodi调参卡顿",
+      "斐讯T1全固件自适应硬解修复工具包",
+      "恩山论坛kloved1314",
       "T1ZoomHelper.apk下载",
+      "Kodi去黑边画质调节",
       "Android底层参数提取",
       "disp_mode 2160p60hz42010bit",
       "晶晨芯片VPP画面缩放",
@@ -347,10 +356,10 @@ export const casesData: CaseItem[] = [
     "projectTime": "2026.03",
     "visitUrl": "局域网微服务 · GitHub 开源",
     "overview": {
-      "narrative": "本项目的探索源于一次真实的家庭影院画质升级：笔者手头的【明基 BenQ TK700 4K 投影仪】在送修升级官方 1.02 固件（以支持完整 3D 播放）后，斐讯 T1 盒子的信号输入意外从原本细腻的 10bit 420 强制跌落为泛白发灰的 8bit 444；更棘手的是，由于底层 EDID 异常，系统设置里的【显示】菜单无法正常进入（其他系统功能均正常），根本无法通过遥控器在盒子上改回色彩设置。\n\n既然在电视端无法进入显示设置，我们便通过电脑端网络 ADB 深入后台进行排查调研，深入反编译晶晨显示守护进程，终于找到了掌控自动重协商的关键底层参数（ubootenv.var.is.bestmode 等），一键向 U-Boot ENV 闪存固化 4K 60Hz 10bit，成功修正了这个错误。\n\n初战告捷后，我们发散思维、进一步探索其他有用参数：既然能直接与芯片底层对话，硬件流水线中是否还封印着其他高级影音能力？顺着内核驱动树地毯式探测，我们成功挖掘并实现了视频画面 Zoom 硬件缩放（去黑边）、色彩饱和度、亮度、对比度与晶晨 DNLP 硬件动态去灰等一系列高阶画质调节。\n\n然而在实现这些调节的过程中，我们踩中了底层硬件安全沙箱的致命暗坑——在播放视频动态微调画面参数时，驱动层通信意外触碰到了 Android 7.1 Seccomp 沙箱缺失 sendto 白名单的底层漏洞，导致 MediaCodec 硬解进程被 Linux 内核无情处决，硬件解码瞬间失效，4K 画面退回软解引发严重卡顿与掉帧。为了给只读系统分区中的 Seccomp 沙箱策略补齐缺失的 sendto 允许白名单，我们通过纯数学定位策略文件在 ext4 数据块与 eMMC 物理扇区的绝对落点，打造并精准写入了 859 字节等长无损的微创热补丁，从物理闪存层彻底治愈了调参导致硬解失效与卡顿的魔咒。\n\n最后，为了摆脱“看电影每次都要开电脑连 ADB 敲命令”的繁琐体验，我们独立设计开发了电视端常驻微服务【T1ZoomHelper.apk】：利用 127.0.0.1 本地环回 ADB 协议实现开机 1 秒免密静默自启，同一局域网手机扫码即开 Web 遥控调色盘，并在后台自动与 Kodi 本地 9090 端口双向协同，实现了 0% 算力 125% 满屏无损变焦与随心所欲的画质掌控。",
+      "narrative": "本项目的探索源于一次真实的家庭影院画质升级：笔者手头的【明基 BenQ TK700 4K 投影仪】在送修升级官方 1.02 固件（以支持完整 3D 播放）后，斐讯 T1 盒子的信号输入意外从原本细腻的 10bit 420 强制跌落为泛白发灰的 8bit 444；更棘手的是，由于底层 EDID 异常，系统设置里的【显示】菜单无法正常进入（其他系统功能均正常），根本无法通过遥控器在盒子上改回色彩设置。\n\n既然在电视端无法进入显示设置，我们便通过电脑端网络 ADB 深入后台进行排查调研，深入反编译晶晨显示守护进程，终于找到了掌控自动重协商的关键底层参数（ubootenv.var.is.bestmode 等），一键向 U-Boot ENV 闪存固化 4K 60Hz 10bit，成功修正了这个错误。\n\n初战告捷后，我们发散思维、进一步探索其他有用参数：既然能直接与芯片底层对话，硬件流水线中是否还封印着其他高级影音能力？顺着内核驱动树地毯式探测，我们成功挖掘并实现了视频画面 Zoom 硬件缩放（去黑边）、色彩饱和度、亮度、对比度与晶晨 DNLP 硬件动态去灰等一系列高阶画质调节。\n\n然而在实现这些调节的过程中，我们踩中了底层硬件安全沙箱的致命暗坑——在播放视频动态微调画面参数时，驱动层通信意外触碰到了 Android 7.1 Seccomp 沙箱缺失 sendto 白名单的底层漏洞，导致 MediaCodec 硬解进程被 Linux 内核无情处决，硬件解码瞬间失效，4K 画面退回软解引发严重卡顿与掉帧。为了给只读系统分区中的 Seccomp 沙箱策略补齐缺失的 sendto 允许白名单，我们通过纯数学定位策略文件在 ext4 数据块与 eMMC 物理扇区的绝对落点，打造并精准写入了 859 字节等长无损的微创热补丁，从物理闪存层彻底治愈了调参导致硬解失效与卡顿的魔咒。\n\n【2026 重大迭代 · 恩山网友协同与全固件自适应突破】：\n在恩山无线论坛发布技术方案后，得到了热心网友 @kloved1314 的宝贵反馈与深入协助。早期的微创补丁方案针对特定官改底包硬编码了 327225 数据块，但坛友们刷入的固件版本千差万别（涵盖 Webpad、YYF、Rush 以及各种官改底包），不同固件的 Ext4 分区 Inode 结构与物理扇区落点各异，导致固定块号无法跨固件通用。在网友 kloved1314 的测试与协助下，我们彻底改进了实现方法，编写了自动化解析 Ext4 Superblock、Block Group 和 Inode Extents 树的动态寻址引擎，并加入了 100% 逐字节指纹验真防呆机制，打包制作了《斐讯T1_全固件自适应硬解修复工具包.zip》！如今只要盒子的固件具备 Root 功能，双击一键批处理即可全自动完成无损注入修复，任何带 Root 的固件都可以轻易实现了！\n\n【关键核心提示 · 调节功能生效范围】：\n特别向各位极客玩家强调：本项目解锁的 125% 硬件变焦（消除黑边）、色彩饱和度、亮度、对比度与晶晨 DNLP 硬件去灰等调节功能，均直接作用于芯片底层的 VPP（Video Post Processor 视频后处理器）硬件管线。该管线仅在开启 MediaCodec 硬件解码视频流时被激活，因此所有画面变焦与画质微调功能【只在 Kodi 播放器中才能有效】！在安卓系统原生桌面、系统设置菜单或普通非直通播放器中，VPP 视频图层处于休眠状态，调节是不会有画面反应的。\n\n最后，为了摆脱“看电影每次都要开电脑连 ADB 敲命令”的繁琐体验，我们独立设计开发了电视端常驻微服务【T1ZoomHelper.apk】：利用 127.0.0.1 本地环回 ADB 协议实现开机 1 秒免密静默自启，同一局域网手机扫码即开 Web 遥控调色盘，并在后台自动与 Kodi 本地 9090 端口双向协同，实现了 0% 算力 125% 满屏无损变焦与随心所欲的画质掌控。",
       "target": "攻克特定显示设备开机 EDID 降级、根除 MediaCodec 沙箱处决与硬解失效问题、释放 2.35:1 宽银幕视野，免刷机打造极致稳定的 4K 60Hz 10bit 极客影院。",
       "audience": "家庭影院与投影玩家、老旧硬件救赎极客、嵌入式 Linux / Android 底层逆向开发者。",
-      "format": "底层物理闪存热补丁 + 电视端自启 APK (v3.0) + 手机 Web 遥控中枢"
+      "format": "全固件自适应修复工具包 + 电视端自启 APK (v3.0) + 手机 Web 遥控中枢"
     },
     "designHighlights": [
       {
@@ -359,13 +368,13 @@ export const casesData: CaseItem[] = [
         "iconType": "layout"
       },
       {
-        "title": "物理闪存扇区微创热补",
-        "desc": "利用数学算法精准定位 ext4 块 327225 与 eMMC 551481 扇区，859 字节无损补丁写入物理存储，根治调参时 MediaCodec 硬解失效与画面严重卡顿。",
+        "title": "全固件自适应微创热补",
+        "desc": "恩山网友 kloved1314 协助联合优化：Ext4 动态解析与逐字节指纹验真，支持任意 Root 固件一键自适应修复，根治调参硬解失效与卡顿。",
         "iconType": "visual"
       },
       {
         "title": "芯片级 VPP 硬件满屏直通",
-        "desc": "突破 Android SurfaceView 负坐标视窗截断壁垒，直通晶晨 VPP 硬件后处理器，0% 算力开销消除 2.35:1 宽银幕黑边。",
+        "desc": "突破 Android SurfaceView 负坐标视窗截断壁垒，直通晶晨 VPP 硬件后处理器，0% 算力开销消除 2.35:1 宽银幕黑边（仅 Kodi 生效）。",
         "iconType": "responsive"
       },
       {
@@ -396,13 +405,18 @@ export const casesData: CaseItem[] = [
       },
       {
         "label": "前置系统环境",
-        "value": "DB1 官改 Root 固件",
-        "desc": "基于 1.6T57 底包，内置 su (密码 31183118)，纯原厂无 Root 不可行"
+        "value": "任意带 Root 的固件 (全固件自适应)",
+        "desc": "Webpad / YYF / Rush / 当贝官改等全兼容（在恩山网友 kloved1314 协助下升级为自适应寻址，纯原厂无 Root 不可行）"
+      },
+      {
+        "label": "核心受效播放器",
+        "value": "Kodi 播放器 (硬件直通)",
+        "desc": "直通晶晨 VPP 视频后处理器：画面变焦去黑边与色彩微调【只在 Kodi 播放器中才能有效】"
       },
       {
         "label": "物理闪存介质",
         "value": "16GB eMMC 5.0",
-        "desc": "精准定位 ext4 块 327225 / 物理 551481 号 4KB 扇区微创热补"
+        "desc": "动态解析 Ext4 物理扇区 + 逐字节指纹验真防呆，微创热补绝不变砖"
       },
       {
         "label": "视频硬件管线",
@@ -456,19 +470,19 @@ export const casesData: CaseItem[] = [
       {
         "id": "act-3",
         "badge": "第三幕 · 手术篇",
-        "title": "给物理闪存做“微创心脏手术”——eMMC 扇区热补丁",
-        "subtitle": "只读文件系统无法挂载修改？用纯数学穿透 Ext4 文件系统，在 551481 物理扇区精准动刀！",
-        "summary": "编写 Python 计算器精准测算目标策略文件在 ext4 数据块 327225 与 eMMC 物理闪存 551481 扇区的位置，利用文件头注释区以 859B 严格等长无损写入 sendto: 1，彻底解除调参导致硬解失效卡顿的魔咒。",
+        "title": "给物理闪存做“微创心脏手术”——从固定扇区到全固件自适应热补丁",
+        "subtitle": "只读文件系统无法挂载修改？用纯数学穿透 Ext4 文件系统，在恩山网友协助下进化为全固件自适应寻址！",
+        "summary": "编写 Python 计算器精准测算目标策略文件在 ext4 数据块与 eMMC 物理闪存扇区的位置，利用文件头注释区以 859B 严格等长无损写入 sendto: 1。在恩山网友 kloved1314 协助下升级为全固件自适应动态寻址与指纹验真，任何具备 Root 的固件均可一键修复，彻底解除调参硬解失效卡顿的魔咒。",
         "narrative": [
           "找到了病灶，摆在面前的却是一堵高墙：由于 system 分区采用 ext4 只读镜像且无法通过 mount -o remount,rw 重新挂载，任何试图直接修改 /system/etc/seccomp_policy/ 的常规操作都会被系统无情拒绝。如果为此重新解包、修改固件、打包并全盘重刷，不仅耗时繁琐，更容易引入未知的稳定性隐患。",
-          "真正的极客从不被文件系统表象束缚。既然逻辑文件层不让动，我们就直接去物理存储层动微创手术！我们编写了自动化 Python 脚本，通过解析 ext4 的 SuperBlock、Block Group 描述符与 Inode 表，如同 GPS 卫星定位般精准算出了 mediacodec-seccomp.policy 的物理落点：它正静静躺在 system 分区的第 327225 号数据块上。",
-          "叠加 system 分区在整个 eMMC 芯片上的起始偏移（1794048 扇区），我们精确折算出了它在物理设备 /dev/block/mmcblk0 中的绝对位置：第 551481 号 4KB 扇区！为了绝不破坏文件系统的校验和与 Inode 结构，我们在原文件头部的无用注释区替换写入 sendto: 1，保持 859 字节等长无损，随后用 dd 笔直写入物理扇区并刷新内存缓存。修复后再进 Kodi 随意狂搓画面调参，MediaCodec 稳若泰山，硬件解码持续流畅生效，调参卡顿魔咒彻底化解！"
+          "真正的极客从不被文件系统表象束缚。既然逻辑文件层不让动，我们就直接去物理存储层动微创手术！我们编写了自动化 Python 脚本，通过解析 ext4 的 SuperBlock、Block Group 描述符与 Inode 表，如同 GPS 卫星定位般精准算出了 mediacodec-seccomp.policy 在特定官改固件上的物理落点：第 327225 号数据块（物理 551481 号 4KB 扇区）。为了绝不破坏文件系统的校验和与 Inode 结构，我们在原文件头部的无用注释区替换写入 sendto: 1，保持 859 字节等长无损，随后用 dd 笔直写入物理扇区并刷新内存缓存。修复后再进 Kodi 随意狂搓画面调参，MediaCodec 稳若泰山，硬件解码持续流畅生效！",
+          "【社区共建 · 演进至全固件自适应（致谢恩山网友 @kloved1314）】：技术方案在恩山无线论坛发布后，得到了热心网友 @kloved1314 的宝贵反馈与深入协助。经测试发现，不同玩家刷入的 Webpad、YYF、Rush 以及各种官改固件，其 Ext4 Inode 分布与物理扇区存在偏移，早期写死 327225 块号的方案在其他固件上无法通用。在网友 kloved1314 的全力协助与联合测试下，我们彻底改进了实现方法：重构了动态 Ext4 逆向寻址引擎，自动读取盒子的 SuperBlock (Block 0) 与 Block Group 描述符，动态解算 Inode 偏移与 Extents 树，并在写入前执行 100% 逐字节指纹验真防呆比对，最终封装成了《斐讯T1_全固件自适应硬解修复工具包.zip》！从此只要盒子里带有 Root 功能，双击即可一键精准修复，任何改版固件均可轻易实现！"
         ],
-        "keyTakeaway": "当操作系统的逻辑门向你关闭时，块设备的物理扇区永远向你敞开。保持尺寸与校验的一致，是微创手术的生命线。",
+        "keyTakeaway": "当操作系统的逻辑门向你关闭时，块设备的物理扇区永远向你敞开。在社区网友协助下将静态偏移升级为动态自适应，是极客工具普适化的必由之路。",
         "codeSnippet": {
           "lang": "bash",
-          "code": "dd if=/sdcard/block_327225_patched.bin of=/dev/block/mmcblk0 seek=551481 bs=4096 count=1 conv=notrunc\nsync && echo 3 > /proc/sys/vm/drop_caches",
-          "note": "向物理闪存 551481 号扇区精准灌入 859 字节微创修补块"
+          "code": "# 全固件自适应一键打补丁核心逻辑（动态解析 Inode 与物理块，100% 指纹核验）：\npython safe_adaptive_patch.py  # 或在 Windows 下直接双击【一键自适应打补丁.bat】",
+          "note": "全固件自适应动态解算 Ext4 物理扇区并无损注入 Seccomp 补丁"
         }
       },
       {
@@ -476,17 +490,18 @@ export const casesData: CaseItem[] = [
         "badge": "第四幕 · 破局篇",
         "title": "击穿黑边结界！芯片 VPP 视频后处理器降维打击",
         "subtitle": "软件视窗的死胡同：为何 Kodi 缩放一大于 1.0 就失灵？直通芯片硬件管线实现 0% 算力满屏！",
-        "summary": "Kodi Surface 硬解下画面放大超出视窗会导致负坐标，被 Android SurfaceFlinger 暴力裁剪。跳过应用层，直接控制晶晨芯片底层 VPP 视频后处理器节点，联动 Kodi JSON-RPC 释放全屏黑边。",
+        "summary": "Kodi Surface 硬解下画面放大超出视窗会导致负坐标，被 Android SurfaceFlinger 暴力裁剪。跳过应用层，直接控制晶晨芯片底层 VPP 视频后处理器节点，联动 Kodi JSON-RPC 释放全屏黑边。同时必须注意：所有变焦与调色调节仅在 Kodi 播放器中有效。",
         "narrative": [
           "调参导致硬解失效卡顿的暗雷排除了，下一个横亘在眼前的难题是宽银幕电影的上下黑边。在 16:9 的投影幕布上播放 2.35:1 比例的大片时，上下两条宽阔的黑边极其削弱沉浸感。我们尝试在 Kodi 的视频设置里将画面缩放调整为 125%，令人匪夷所思的现象出现了：画面可以随意缩小，但只要缩放比例大于 1.0，画面就纹丝不动！",
           "这并非 Kodi 的代码缺陷，而是 Android 渲染架构的宿命限制。在 MediaCodec Surface 硬件直通模式下，解码帧由底层 SurfaceFlinger 统筹渲染。一旦画面放大，视频图层的坐标就会溢出到屏幕之外变成负坐标，SurfaceFlinger 会在图层合成时无情地将溢出区域全部截断！若退回软解，弱小的 CPU 又会在 4K 巨浪面前瞬间熔化。",
-          "解决困局的钥匙不在软件层，而在芯片硬件本身。晶晨 S912 内置了一颗极其强悍的专属协处理器——VPP（Video Post Processor 视频后处理器）。它坐落在解码引擎与 HDMI 发射芯片之间，拥有独立的硬件缩放与画质增强流水线。通过向内核节点 /sys/class/video/zoom 写入 125，并配合 Kodi 环回 9090 端口发送 JSON-RPC 展开底层视窗，我们以 0% 的 CPU 与 GPU 开销，让画面以丝滑无损的画质撑满了整个幕布！"
+          "解决困局的钥匙不在软件层，而在芯片硬件本身。晶晨 S912 内置了一颗极其强悍的专属协处理器——VPP（Video Post Processor 视频后处理器）。它坐落在解码引擎与 HDMI 发射芯片之间，拥有独立的硬件缩放与画质增强流水线。通过向内核节点 /sys/class/video/zoom 写入 125，并配合 Kodi 环回 9090 端口发送 JSON-RPC 展开底层视窗，我们以 0% 的 CPU 与 GPU 开销，让画面以丝滑无损的画质撑满了整个幕布！",
+          "【底层硬件特性：调节功能为何只在 Kodi 播放器才能有效？】很多朋友疑惑：为什么在安卓主界面或某些普通 App 里滑动调色盘没有反应？这是因为晶晨 S912 的 VPP 视频后处理器（/sys/class/video/zoom 变焦与 am_vecm 色彩增强）只挂载在视频硬件直通流水线上。在安卓静态桌面时，图层由 2D 图形引擎 SurfaceFlinger 与 GPU 渲染，VPP 硬件管线未被激活；只有当 Kodi 播放视频、开启 MediaCodec 硬件加速直通渲染时，芯片的 VPP 硬件直通通道才会被完全唤醒接管。因此所有去黑边与色彩微调必须在 Kodi 播放器中才能有效！"
         ],
-        "keyTakeaway": "在应用层绞尽脑汁的瓶颈，在芯片底层硬件工程师眼中往往只是一组早早预留好的寄存器。",
+        "keyTakeaway": "在应用层绞尽脑汁的瓶颈，在芯片底层硬件工程师眼中往往只是一组早早预留好的寄存器。切记硬件直通特性：只有在 Kodi 开启视频硬解时，VPP 硬件调节才会生效。",
         "codeSnippet": {
           "lang": "bash",
           "code": "echo 125 > /sys/class/video/zoom\necho '{\"jsonrpc\":\"2.0\",\"method\":\"Player.SetViewMode\",\"params\":{\"viewmode\":\"zoom\"},\"id\":1}' | nc 127.0.0.1 9090",
-          "note": "向晶晨 VPP 协处理器下发 125% 硬件变焦，并联动 Kodi 展开全屏视窗"
+          "note": "向晶晨 VPP 协处理器下发 125% 硬件变焦，并联动 Kodi 展开全屏视窗（仅在 Kodi 播放中有效）"
         }
       },
       {
@@ -511,9 +526,9 @@ export const casesData: CaseItem[] = [
     "tutorialSteps": [
       {
         "stepNumber": "00",
-        "title": "【核心前提】确认刷入带 Root 的官改固件",
-        "desc": "请务必在动手前确认系统环境：纯原厂官方固件由于没有内置 su 提权程序，系统处于完全锁定状态，是无法执行底层固化与寄存器控制的！必须刷入带有 Root 权限的固件。本教程经完整验证的推荐固件为：基于原厂 1.6T57 底包制作的【当贝/官改 Root 固件】（固件版本号：DB1_0000_7.1.2_1.6T57_0719_SH，内置 su 且 root 密码为 31183118，默认开启 5555 调试端口）。",
-        "tip": "进入盒子的【设置】->【关于本机】即可查看系统版本。若系统满足前置条件，继续往下走一路畅通无阻。"
+        "title": "【核心前提】确认刷入带 Root 的固件（全固件自适应，调参仅 Kodi 生效）",
+        "desc": "请务必在动手前确认系统环境：由于需要向底层块设备进行热补丁注入，纯原厂无 Root 的固件处于完全锁定状态，是无法执行底层固化与寄存器控制的。在恩山论坛网友 kloved1314 的反馈与协助下，我们已经改进了实现方法并制作了全固件自适应工具包：现在不再挑特定固件底包，【只要盒子里刷入了带有 Root 权限的固件】（包括 Webpad、YYF、Rush 固件、当贝官改固件等），都可以轻易实现硬解修复与画质调优！同时请务必牢记：画面变焦与调色功能直通晶晨 VPP 视频硬件管线，【只在 Kodi 播放器中才能有效】。",
+        "tip": "【系统与生效范围核验】：\n• Root 权限要求：进入盒子的【设置】->【关于本机】查看系统。只要固件自带 Root 权限（如内置 su 无论是免密还是密码 31183118 均可），工具将全自动适配识别！\n• Kodi 播放器专属要求：所有画面去黑边与色彩微调均依托芯片级 VPP 视频后处理器直通流水线，必须在 Kodi 播放视频时才有效。"
       },
       {
         "stepNumber": "01",
@@ -541,11 +556,11 @@ export const casesData: CaseItem[] = [
       },
       {
         "stepNumber": "04",
-        "title": "【关键防硬解失效】物理闪存微创注入 Seccomp 硬解热补丁",
-        "desc": "在启动 APK 变焦或进入 Kodi 调整画面参数前，【必须首先打入此微创补丁】！因为 Android 7.1 沙箱策略遗漏了 sendto 系统调用白名单，播放 4K 原盘时一旦动态调参，驱动与 init 通信即刻触发 SIGSYS 致命信号，硬解进程 media.codec 会被当场处决导致硬件解码失效、4K 画面严重卡顿掉帧。本方案无需解包全盘重刷固件，直接向物理存储 ext4 第 327225 块（eMMC 551481 扇区）等长注入 859 字节微创修补块，彻底化解调参硬解失效魔咒。",
-        "command": "# 1. 将微创补丁块推送到盒子临时目录\n.\\adb.exe push block_327225_patched.bin /data/local/tmp/patched_block.bin\n\n# 2. 物理块无损写入、刷新内核缓存并热重启解码器\npowershell -Command \"echo '31183118`ndd if=/data/local/tmp/patched_block.bin of=/dev/block/system bs=4096 seek=327225 count=1 conv=notrunc`nsync`necho 3 > /proc/sys/vm/drop_caches`nkill -9 `$(pidof media.codec)`nexit' | .\\adb.exe shell su\"\n\n# 3. 核验沙箱策略白名单（首行输出包含 sendto: 1 即表示微创手术成功）\n.\\adb.exe shell \"head -n 5 /system/etc/seccomp_policy/mediacodec-seccomp.policy\"",
+        "title": "【关键防硬解失效 · 推荐首选】使用《全固件自适应硬解修复工具包》一键修复",
+        "desc": "在恩山论坛网友 kloved1314 的深度反馈与协助下，我们改进了实现方法，推出了《斐讯T1_全固件自适应硬解修复工具包.zip》。无论你刷的是何种带有 Root 权限的固件，工具都会全自动连接盒子、动态读取 Ext4 文件系统元数据、精准定位 Inode 与扇区物理块、并在 100% 逐字节指纹验真后无损注入 Seccomp 白名单补丁，彻底根除调参硬解失效卡顿！\n\n【简易操作三步法】：\n1. 下载并解压《斐讯T1_全固件自适应硬解修复工具包.zip》；\n2. 电脑与盒子连接同一家庭 Wi-Fi，双击运行【一键自适应打补丁.bat】（或直接运行 T1_Seccomp_Patcher.exe）；\n3. 终端提示时输入盒子的局域网 IP（例如 192.168.123.98）并回车，工具自动完成检测、验真与热注入修复，显示 SUCCESS 即大功告成！",
+        "command": "# 1. 推荐一键操作：直接双击运行解压后的【一键自适应打补丁.bat】（或 T1_Seccomp_Patcher.exe）\n# 根据提示输入盒子 IP 即可自动完成自适应解析与热补丁注入！\n\n# 2. 补丁生效核验（终端首行输出包含 sendto: 1 与 recvfrom: 1 即表示微创手术成功）：\n.\\adb.exe shell \"head -n 5 /system/etc/seccomp_policy/mediacodec-seccomp.policy\"",
         "commandLang": "powershell",
-        "tip": "【双重极客保障与一键批处理】\n• 一键批处理工具：配套补丁镜像块 block_327225_patched.bin 与批处理 apply_seccomp_patch.bat 已提供本地下载；Windows 用户将两者放入同一目录双击即可一键全自动注入；\n• 预期返回核验：执行 head -n 5 后终端首行赫然显示 sendto: 1 与 recvfrom: 1，说明补丁已在物理存储与内核内存中生效！此后再在 Kodi 中狂搓画面变焦与调色，硬解管线亦稳如磐石。"
+        "tip": "【全固件自适应与安全保障】\n• 普适全固件兼容：在恩山网友 kloved1314 的协助下重构，任何带有 Root 权限的固件（Webpad / YYF / Rush / 当贝官改等）均可秒级自适应匹配并执行修复；\n• 绝不变砖安全防线：工具写入前会对目标物理块进行 100% 逐字节指纹比对，若非目标策略文件绝不写入，杜绝任何误写变砖风险；\n• 预期返回核验：执行 head -n 5 后终端首行赫然显示 sendto: 1 与 recvfrom: 1，说明补丁已在物理存储与内核内存中生效！此后再在 Kodi 中狂搓画面变焦与调色，硬解管线亦稳如磐石。"
       },
       {
         "stepNumber": "05",
@@ -561,7 +576,8 @@ export const casesData: CaseItem[] = [
         "desc": "手机连上同一家庭 Wi-Fi，打开手机浏览器访问 http://盒机局域网IP:8989（例如 http://192.168.123.98:8989），即可进入极客自研的【斐讯 T1 影音画质控制】网页控制台。所有参数直连晶晨 S912 底层 VPP 硬件寄存器，免电脑、免弹窗，实现开机自动记忆与零算力损耗的实时微调。",
         "image": "/assets/cases/phicomm-t1-network-control.jpg",
         "imageCaption": "实机截图：斐讯 T1 影音与画质控制 Web 控制台（手机端浏览器访问 192.168.x.x:8989 实时交互界面）",
-        "tip": "【控制台核心功能与操作指南】\n• 画面色彩与画质微调：支持实时无级微调【亮度 (-100~+100)】、【对比度 (-100~+100)】、【色彩饱和度 (-100~+100)】与【肤色冷暖微调 / 色相 (-50~+50)】，各项参数均提供一键复位按键；\n• 硬件画质引擎开关：一键开启【✨ 硬件动态对比度 (DNLP 智能去灰)】与【🎭 CM2 硬件色彩管理 (智能肤色保护)】，由芯片 VPP 硬件层直接渲染，在播放 Kodi、影视仓等视频时即刻生效且不影响安卓静态桌面，并自动记忆保存；\n• 硬件数字变焦（无损切黑边）：放映 2.35:1 宽银幕大片时，手机轻触【125% 铺满】，上下恼人黑边瞬间消失，画面无损等比铺满整面 16:9 幕布；亦可选择【115% 轻微变焦】或【133% 完全拉满】；\n• 画面拉伸模式与复位：支持【全屏强制拉伸】与【智能非线性拉伸（中间保真防人物变形）】，随时可点按【恢复 100% 原始比例】一键清空所有缩放与裁切。"
+        "tip": "【控制台核心功能与操作指南】\n• 画面色彩与画质微调：支持实时无级微调【亮度 (-100~+100)】、【对比度 (-100~+100)】、【色彩饱和度 (-100~+100)】与【肤色冷暖微调 / 色相 (-50~+50)】，各项参数均提供一键复位按键；\n• 硬件画质引擎开关：一键开启【✨ 硬件动态对比度 (DNLP 智能去灰)】与【🎭 CM2 硬件色彩管理 (智能肤色保护)】，由芯片 VPP 硬件层直接渲染，在播放 Kodi 视频时即刻生效且不影响安卓静态桌面，并自动记忆保存；\n• 硬件数字变焦（无损切黑边）：放映 2.35:1 宽银幕大片时，手机轻触【125% 铺满】，上下恼人黑边瞬间消失，画面无损等比铺满整面 16:9 幕布；亦可选择【115% 轻微变焦】或【133% 完全拉满】；\n• 画面拉伸模式与复位：支持【全屏强制拉伸】与【智能非线性拉伸（中间保真防人物变形）】，随时可点按【恢复 100% 原始比例】一键清空所有缩放与裁切。",
+        "warning": "【核心适用范围预警】：画面变焦去黑边与色彩微调直通芯片 VPP 硬件后处理器，【只在 Kodi 播放器中才能有效】！在安卓系统原生桌面、系统设置菜单或普通非直通播放器中，VPP 视频图层处于休眠状态，调节是不会有视觉反应的。"
       },
       {
         "stepNumber": "07",
@@ -570,7 +586,7 @@ export const casesData: CaseItem[] = [
         "command": "# 开启 Kodi 远程控制服务（在电视端 Kodi 界面中完成，仅需设置一次）：\n1. 进入 Kodi【设置】->【服务设置】->【控制】(Settings -> Services -> Control)\n2. 开启【允许通过 HTTP 进行远程控制】(Allow remote control via HTTP，默认端口 8080)\n3. 开启【允许来自其他系统的应用程序远程控制】(Allow remote control by applications on other systems，开启 9090 TCP 端口)",
         "commandLang": "text",
         "tip": "【自动协同双重极客提示】\n• 零感联动体验：只要 Kodi 开启了上述 9090 控制选项，T1ZoomHelper 就会在后台全自动建立 Socket 握手，电视屏幕零弹窗打扰；\n• 全局视图默认保持 Normal：Kodi 播放普通的 16:9 片源时硬解原本完全稳定正常；得益于后台自动协同通信，在 Kodi 内部的“视频设置”中，全局默认视图模式请务必保持为【正常 (Normal)】，切勿手滑设置拉伸。",
-        "warning": "千万切勿手滑将【拉伸 16:9】设为默认设置！否则以后打开任何标准的 16:9 电视剧或综艺时，画面都会被强行压扁变形！画面去黑边完全交给手机端与后台自动协同即可。"
+        "warning": "千万切勿手滑将【拉伸 16:9】设为默认设置！否则以后打开任何标准的 16:9 电视剧或综艺时，画面都会被强行压扁变形！画面去黑边完全交给手机端与后台自动协同即可。再次强调：所有画质微调与变焦功能只在 Kodi 播放器中才能有效！"
       }
     ],
     "paramExtraction": {
@@ -701,42 +717,48 @@ export const casesData: CaseItem[] = [
       }
     },
     "downloadItem": {
-      "title": "T1ZoomHelper 电视端画质自启微服务 & Seccomp 补丁",
-      "fileName": "T1ZoomHelper.apk",
-      "fileSize": "22.8 KB",
-      "version": "v3.0 极客稳定版",
-      "releaseDate": "2026.03",
-      "downloadUrl": "/downloads/T1ZoomHelper.apk",
-      "secondaryDownloadUrl": "/downloads/block_327225_patched.bin",
-      "secondaryFileName": "block_327225_patched.bin",
-      "secondaryFileSize": "4.0 KB",
-      "md5": "F5E265842D83E83A1567BA7A2460EB9E",
-      "sha256": "624E7DAAA0891956D939DCED521C9CA921B9F8217F54FAEAD570B6E3988D5682",
-      "description": "专为斐讯 T1 盒子（晶晨 S912 芯片平台）量身打造的超轻量电视端常驻服务与防硬解失效热补丁。配套提供的 block_327225_patched.bin 物理扇区补丁彻底修复 Android 沙箱 Seccomp 漏洞，免疫调参崩溃；T1ZoomHelper (v3.0) 利用本地环回 ADB 协议实现开机 1 秒免 Root 弹窗静默自启，0% 算力调用晶晨 VPP 硬件实现 125% 影院等比变焦，消除 2.35:1 宽银幕上下黑边，同一局域网手机扫码即开 Web 遥控调色盘。",
+      "title": "斐讯 T1 全固件自适应硬解修复工具包 & T1ZoomHelper (v3.0)",
+      "fileName": "斐讯T1_全固件自适应硬解修复工具包.zip",
+      "fileSize": "10.36 MB",
+      "version": "v4.0 全固件自适应版 (感谢恩山网友 kloved1314 协助)",
+      "releaseDate": "2026.10",
+      "downloadUrl": "/downloads/斐讯T1_全固件自适应硬解修复工具包.zip",
+      "secondaryDownloadUrl": "/downloads/T1ZoomHelper.apk",
+      "secondaryFileName": "T1ZoomHelper.apk (独立微服务)",
+      "secondaryFileSize": "22.8 KB",
+      "md5": "91C212F7712061C52F289A89B91BB3DB",
+      "sha256": "2E169D282C18E0A593392B6E5D66CAC9F078CE610726FBFA0DF72BA61C6F0CFD",
+      "contributorAcknowledgement": {
+        "author": "恩山论坛网友 @kloved1314",
+        "source": "恩山无线论坛 (RightHand)",
+        "description": "在恩山论坛网友 kloved1314 的宝贵反馈与深度协同测试下，彻底重构了底层寻址机制，研发出动态 Ext4 Inode 逆向寻址与双重指纹防呆校验算法，做成了全固件自适应修复工具包！只要是有 root 功能的固件都可以轻易实现了。"
+      },
+      "kodiNotice": "郑重强调：视频画面 125% 硬件变焦（消除黑边）与色彩调节功能直通晶晨 S912 芯片 VPP 视频后处理器硬件管线，【调节功能只在 Kodi 播放器（硬件直通模式）中才能有效】！在安卓系统原生桌面、系统设置菜单或普通非直通播放器中，VPP 视频图层处于休眠状态，调节是不会有视觉反应的。",
+      "description": "专为斐讯 T1 盒子（晶晨 S912 芯片平台）量身打造的全固件自适应硬解修复与影院级画质调优套件。在恩山论坛网友 kloved1314 的反馈与协助下，新版全面升级为动态自适应 Ext4 寻址与 100% 逐字节指纹验真算法，不再受限于特定固件版本，只要是带有 Root 权限的固件（Webpad / YYF / Rush / 当贝官改等），双击一键批处理即可全自动完成 Seccomp 补丁无损注入，根治调参硬解失效与卡顿！包内同时内置 T1ZoomHelper.apk、adb 环境与一键修复工具。请牢记：变焦与调色功能仅在 Kodi 播放器中有效。",
       "features": [
-        "免疫调参硬解失效：搭配 Seccomp 物理闪存微创热补丁，任意调整变焦与色彩均不触发 SIGSYS 沙箱崩溃，保证 4K 流畅硬解",
-        "免电脑 · 开机 1 秒静默自启：通过 127.0.0.1:5555 本地环回 ADB 免密提权，电视无任何弹窗打扰",
-        "0% 算力硬件等比变焦：直通晶晨 VPP 协处理器 /sys/class/video/zoom，125% 满屏无损去黑边",
-        "晶晨 DNLP 画质去灰引擎：动态非线性对比度与直方图增强实时写入，告别投影泛白发灰",
-        "手机 Web 实时遥控中枢：内置 8989 端口轻量 HTTP 服务，同一局域网手机扫码即开调色盘",
-        "极致轻量零遮挡：安装包仅 23KB，纯原生 Java Socket，无任何多余依赖，内存占用仅 8MB"
+        "全固件动态自适应：感谢恩山网友 kloved1314 协助联合优化，只要是有 root 权限的固件均可轻易实现修复",
+        "双重指纹验真防误刷：写入前对目标物理块进行 100% 逐字节指纹比对，非目标策略文件绝不写入，杜绝任何变砖风险",
+        "严格等长微创补丁：利用策略文件头部注释区等长注入 sendto 白名单，完全保持原文件大小与 Ext4 元数据结构",
+        "彻底根治调参硬解失效：修复 Android 7.1 沙箱漏洞，任意调整变焦与色彩均不触发 SIGSYS 处决，保证 4K 原盘稳定流畅硬解",
+        "VPP 硬件变焦与画质中枢：直通晶晨 VPP 协处理器 125% 满屏无损去黑边，手机 Web 调色盘实时掌控（调节仅在 Kodi 播放器中有效）",
+        "免电脑开机 1 秒静默自启：T1ZoomHelper (v3.0) 电视端微服务通过 127.0.0.1 环回 ADB 免密提权，电视屏幕零弹窗打扰"
       ],
       "installCommands": [
         {
-          "label": "1. Seccomp 补丁写入（防硬解失效卡顿）",
-          "cmd": "adb push block_327225_patched.bin /data/local/tmp/ && echo 31183118 | adb shell su 0 dd if=/data/local/tmp/block_327225_patched.bin of=/dev/block/system bs=4096 seek=327225 count=1 conv=notrunc"
+          "label": "1. 一键自适应打补丁（推荐，任何 Root 固件适用）",
+          "cmd": "解压工具包 -> 双击【一键自适应打补丁.bat】(或 T1_Seccomp_Patcher.exe) -> 输入盒子 IP -> 自动完成全固件修复"
         },
         {
-          "label": "2. ADB 网络安装 APK",
-          "cmd": "adb install -r T1ZoomHelper.apk"
+          "label": "2. ADB 网络安装 T1ZoomHelper (v3.0) 微服务",
+          "cmd": ".\\adb.exe install -r T1ZoomHelper.apk && .\\adb.exe shell am start -n com.phicomm.t1zoom/.MainActivity"
         },
         {
-          "label": "3. 首次静默拉起服务",
-          "cmd": "adb shell am start -n com.phicomm.t1zoom/.MainActivity"
-        },
-        {
-          "label": "4. 手机访问遥控面板地址",
+          "label": "3. 手机扫码或浏览器访问画质控制台",
           "cmd": "http://盒机局域网IP:8989"
+        },
+        {
+          "label": "4. 核心调参前提提醒（必读）",
+          "cmd": "画面去黑边与色彩调节直通芯片 VPP 硬件后处理器，必须在【Kodi 播放器】播放视频时调节才能生效"
         }
       ]
     }

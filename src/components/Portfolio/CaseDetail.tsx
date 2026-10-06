@@ -28,7 +28,8 @@ import {
   ShieldCheck,
   ZoomIn,
   ExternalLink,
-  Eye
+  Eye,
+  Package
 } from 'lucide-react';
 import { ImageLightbox, LightboxImageItem } from './ImageLightbox';
 import { CaseComments } from './CaseComments';
@@ -607,7 +608,7 @@ export const CaseDetail: React.FC<CaseDetailProps> = ({
                     }}
                   >
                     <Download size={14} />
-                    <span>直达 APK 下载</span>
+                    <span>{currentCase.id === 'phicomm-t1-hack' ? '直达修复工具下载' : '直达 APK 下载'}</span>
                   </a>
                 </div>
               )}
@@ -979,7 +980,7 @@ export const CaseDetail: React.FC<CaseDetailProps> = ({
               <section id="case-downloads" className="case-download-section">
                 <div className="section-title-bar">
                   <span className="section-bar-accent" />
-                  <h2 className="section-title-cn">极客自研工具下载：T1ZoomHelper (v3.0)</h2>
+                  <h2 className="section-title-cn">{currentCase.id === 'phicomm-t1-hack' ? '极客自研工具下载：全固件自适应硬解修复包' : (currentCase.downloadItem.title || '极客自研工具下载')}</h2>
                   <span className="section-title-en">TOOL DOWNLOAD & DEPLOYMENT</span>
                 </div>
 
@@ -988,7 +989,11 @@ export const CaseDetail: React.FC<CaseDetailProps> = ({
                   <div className="download-card-body">
                     <div className="download-card-header">
                       <div className="apk-icon-badge">
-                        <Smartphone size={32} />
+                        {currentCase.downloadItem.fileName.endsWith('.zip') ? (
+                          <Package size={32} />
+                        ) : (
+                          <Smartphone size={32} />
+                        )}
                       </div>
                       <div className="apk-meta-header">
                         <div className="apk-tag-row">
@@ -1000,6 +1005,30 @@ export const CaseDetail: React.FC<CaseDetailProps> = ({
                         <p className="apk-title-desc">{currentCase.downloadItem.title}</p>
                       </div>
                     </div>
+
+                    {/* 恩山网友致谢与全固件自适应升级声明 */}
+                    {currentCase.downloadItem.contributorAcknowledgement && (
+                      <div className="download-contributor-box">
+                        <div className="contributor-header">
+                          <Sparkles size={16} className="contributor-icon" />
+                          <span className="contributor-badge">社区技术协同突破</span>
+                          <span className="contributor-author">{currentCase.downloadItem.contributorAcknowledgement.author}</span>
+                          <span className="contributor-source">({currentCase.downloadItem.contributorAcknowledgement.source})</span>
+                        </div>
+                        <p className="contributor-desc">{currentCase.downloadItem.contributorAcknowledgement.description}</p>
+                      </div>
+                    )}
+
+                    {/* Kodi 专属生效预警提示 */}
+                    {currentCase.downloadItem.kodiNotice && (
+                      <div className="download-kodi-alert">
+                        <AlertTriangle size={18} className="kodi-alert-icon" />
+                        <div className="kodi-alert-content">
+                          <strong className="kodi-alert-title">核心适用范围预警：</strong>
+                          <span>{currentCase.downloadItem.kodiNotice}</span>
+                        </div>
+                      </div>
+                    )}
 
                     <p className="apk-summary-desc">{currentCase.downloadItem.description}</p>
 

@@ -252,8 +252,8 @@ async function runPrerender() {
 
       // 针对 phicomm-t1-hack 定制高点击搜索标题与摘要
       if (c.id === 'phicomm-t1-hack') {
-        caseTitle = '斐讯 T1 (S912) 4K 60Hz 10bit 闪存固化与底层逆向实战 | T1ZoomHelper.apk下载 | FONXT 精选案例';
-        caseDesc = '深入晶晨S912芯片驱动与Linux内核：攻克明基TK700投影仪EDID 8bit降级、改写U-Boot ENV物理闪存永久锁死4K 60Hz 10bit HDR，551481物理扇区微创热补根治Kodi调参硬解死机，0%算力直通晶晨VPP硬件125%变焦消除2.35:1黑边。附T1ZoomHelper.apk自启微服务免费下载。';
+        caseTitle = '斐讯 T1 (S912) 4K 60Hz 10bit 闪存固化与全固件自适应硬解修复实战 | Kodi专属画质调优 | FONXT 精选案例';
+        caseDesc = '深入晶晨S912底层管线：在恩山论坛网友kloved1314协助下改进实现方法，打造全固件自适应硬解修复工具包，支持任意Root固件一键自适应修复Ext4 Seccomp沙箱。0%算力直通晶晨VPP硬件125%变焦去黑边与色彩微调（调节功能仅在Kodi播放器中有效）。附修复工具包与T1ZoomHelper.apk免费下载。';
       }
 
       // 构建针对搜索引擎结构化数据的 JSON-LD
