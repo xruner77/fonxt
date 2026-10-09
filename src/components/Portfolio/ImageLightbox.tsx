@@ -60,7 +60,7 @@ export const ImageLightbox: React.FC<ImageLightboxProps> = ({
       slides={slides}
       plugins={[Zoom, Thumbnails, Counter, Fullscreen, Download, Captions]}
       on={{
-        view: ({ index }) => {
+        view: ({ index }: { index: number }) => {
           onIndexChange(index);
         },
       }}

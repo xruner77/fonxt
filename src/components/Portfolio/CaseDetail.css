@@ -18,6 +18,8 @@
 .case-hero-fullbleed {
   position: relative;
   width: 100%;
+  max-width: 100vw;
+  box-sizing: border-box;
   padding-top: calc(var(--nav-height) + 24px);
   padding-bottom: 70px;
   background: 
@@ -1743,6 +1745,10 @@
   line-height: 1.6;
   color: #38bdf8;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
 }
 
 .terminal-footer-note {
@@ -1918,6 +1924,10 @@
   line-height: 1.65;
   color: #f8fafc;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
   white-space: pre-wrap;
   word-break: break-all;
 }
@@ -2390,6 +2400,8 @@
   font-size: 0.76rem;
   color: #0f172a;
   flex-grow: 1;
+  min-width: 0;
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -2671,18 +2683,23 @@
   align-items: center;
   gap: 10px;
   font-size: 0.78rem;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .checksum-label {
   font-weight: 700;
   color: #64748b;
   min-width: 65px;
+  flex-shrink: 0;
 }
 
 .checksum-val {
   font-family: ui-monospace, monospace;
   color: #94a3b8;
   word-break: break-all;
+  white-space: normal;
+  min-width: 0;
 }
 
 .download-action-buttons {
@@ -2815,14 +2832,33 @@
   .case-detail-layout {
     display: flex;
     flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
     gap: 32px;
+  }
+
+  .case-main-content {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  /* 移动端/平板端隐藏超宽柔光氛围，消除视口溢出同时保留桌面端品质 */
+  .hero-ambient-atmosphere {
+    display: none;
   }
 
   .case-sidebar-toc {
     position: sticky;
     top: var(--nav-height, 64px);
     z-index: 40;
-    margin: 0 -16px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    margin: 0;
     padding: 0;
   }
 
@@ -2835,6 +2871,10 @@
     padding: 10px 16px;
     max-height: none;
     overflow-y: visible;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
   }
 
   .sidebar-toc-header,
@@ -2845,11 +2885,16 @@
   }
 
   .sidebar-toc-nav {
+    display: flex;
     flex-direction: row;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     white-space: nowrap;
     gap: 8px;
     padding-bottom: 2px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
     scrollbar-width: none;
   }
 
@@ -2873,11 +2918,26 @@
     background: #0284c7;
     color: #ffffff;
   }
+
+  .overview-narrative-flow,
+  .overview-metrics-column {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .chapter-terminal-card {
+    min-width: 0;
+    max-width: 100%;
+  }
 }
 
 @media (max-width: 640px) {
   .download-hero-card {
     padding: 24px 18px;
+    max-width: 100%;
+    box-sizing: border-box;
+    min-width: 0;
+    overflow: hidden;
   }
 
   .download-card-header {
@@ -2886,8 +2946,55 @@
     gap: 12px;
   }
 
+  .apk-title-row,
+  .apk-meta-header,
+  .contributor-box,
+  .checksum-box,
+  .commands-box,
+  .features-box {
+    max-width: 100%;
+    box-sizing: border-box;
+    min-width: 0;
+  }
+
+  .checksum-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    word-break: break-all;
+  }
+
+  .checksum-val {
+    word-break: break-all;
+    white-space: normal;
+  }
+
+  .breadcrumb-current,
+  .nav-case-title {
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+
   .param-cards-grid {
     grid-template-columns: 1fr;
+  }
+
+  .param-item-card {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .param-card-header,
+  .param-path-code,
+  .param-values-row,
+  .param-effect,
+  .param-cmd-row {
+    max-width: 100%;
+    box-sizing: border-box;
+    min-width: 0;
   }
 
   .extraction-methodology-grid {
