@@ -51,8 +51,8 @@ async function deploy() {
     `rm -rf ${CONFIG.remoteDir}/assets/cases/mg`,
     `tar -xzf ${remoteTmp} -C ${CONFIG.remoteDir}/`,
     `rm -f ${remoteTmp}`,
-    `chown -R www:www ${CONFIG.remoteDir}/assets ${CONFIG.remoteDir}/case ${CONFIG.remoteDir}/downloads ${CONFIG.remoteDir}/api ${CONFIG.remoteDir}/*.html ${CONFIG.remoteDir}/*.png ${CONFIG.remoteDir}/*.txt ${CONFIG.remoteDir}/*.xml 2>/dev/null || true`,
-    `chmod -R 755 ${CONFIG.remoteDir}/assets ${CONFIG.remoteDir}/case ${CONFIG.remoteDir}/downloads ${CONFIG.remoteDir}/api ${CONFIG.remoteDir}/*.html ${CONFIG.remoteDir}/*.png ${CONFIG.remoteDir}/*.txt ${CONFIG.remoteDir}/*.xml 2>/dev/null || true`,
+    `chown -R www:www ${CONFIG.remoteDir}/assets ${CONFIG.remoteDir}/case ${CONFIG.remoteDir}/downloads ${CONFIG.remoteDir}/api ${CONFIG.remoteDir}/go ${CONFIG.remoteDir}/*.html ${CONFIG.remoteDir}/*.png ${CONFIG.remoteDir}/*.txt ${CONFIG.remoteDir}/*.xml 2>/dev/null || true`,
+    `chmod -R 755 ${CONFIG.remoteDir}/assets ${CONFIG.remoteDir}/case ${CONFIG.remoteDir}/downloads ${CONFIG.remoteDir}/api ${CONFIG.remoteDir}/go ${CONFIG.remoteDir}/*.html ${CONFIG.remoteDir}/*.png ${CONFIG.remoteDir}/*.txt ${CONFIG.remoteDir}/*.xml 2>/dev/null || true`,
   ].join(' && ');
 
   const sshCmd = `ssh -n -T -p ${CONFIG.port} -i "${CONFIG.keyPath}" -o StrictHostKeyChecking=no -o ConnectTimeout=15 ${CONFIG.user}@${CONFIG.host} "${remoteCmds}"`;
@@ -64,29 +64,14 @@ async function deploy() {
     console.log('🧹 Cleaned up local ' + CONFIG.archiveName);
   }
 
-  // 6. Verification
-  console.log('\n🔍 Verifying server response across multiple standalone HTML pages and assets...');
-  const testUrls = [
-    'http://127.0.0.1/',
-    'http://127.0.0.1/services.html',
-    'http://127.0.0.1/portfolio.html',
-    'http://127.0.0.1/case/magic-gemini.html',
-    'http://127.0.0.1/case/phicomm-t1-hack.html',
-    'http://127.0.0.1/case/bbt-photo-studio.html',
-    'http://127.0.0.1/case/fhjy-tutoring-system.html',
-    'http://127.0.0.1/api/views.php?slug=magic-gemini',
-    'http://127.0.0.1/downloads/T1ZoomHelper.apk',
-  ];
-
+  // 6. Automated Smoke Testing Gate
+  console.log('\n🔍 Running Post-Deployment Smoke Test Gate...');
   try {
-    for (const testUrl of testUrls) {
-      const verifyCmd = `ssh -n -T -p ${CONFIG.port} -i "${CONFIG.keyPath}" ${CONFIG.user}@${CONFIG.host} "curl -I -s -H 'Host: fonxt.com' ${testUrl} | head -n 1"`;
-      const res = execSync(verifyCmd, { encoding: 'utf-8' }).trim();
-      console.log(`  ✓ [${testUrl}]: ${res}`);
-    }
-    console.log('\n🎉 Deployment succeeded! All standalone pages are live at https://fonxt.com');
+    execSync('node scripts/smoke_test.js https://fonxt.com', { stdio: 'inherit' });
+    console.log('\n🎉 Deployment and Smoke Test Gate successfully PASSED! All standalone pages and APIs are live at https://fonxt.com');
   } catch (err) {
-    console.warn('⚠️ Verification check warning:', err.message);
+    console.warn('\n⚠️ Smoke test detected issues. Please check the report above.');
+    throw err;
   }
 }
 

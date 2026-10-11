@@ -33,6 +33,7 @@ import {
 } from 'lucide-react';
 import { ImageLightbox, LightboxImageItem } from './ImageLightbox';
 import { CaseComments } from './CaseComments';
+import { CaseMarkdown, extractMarkdownHeadings } from './CaseMarkdown';
 import './CaseDetail.css';
 
 interface CaseDetailProps {
@@ -150,6 +151,20 @@ export const CaseDetail: React.FC<CaseDetailProps> = ({
 
     if (currentCase.tutorialSteps && currentCase.tutorialSteps.length > 0) {
       items.push({ id: 'case-tutorial', label: `${formatIdx(mainIndex++)} 保姆级实操调校教程` });
+    }
+
+    if (currentCase.markdownContent) {
+      const mdHeadings = extractMarkdownHeadings(currentCase.markdownContent);
+      if (mdHeadings.length > 0) {
+        items.push({ id: 'case-markdown-article', label: `${formatIdx(mainIndex++)} 深度实战长文` });
+        mdHeadings.forEach((h) => {
+          items.push({
+            id: h.id,
+            label: h.label,
+            isSub: h.isSub,
+          });
+        });
+      }
     }
 
     const screenshotsLabel = currentCase.id === 'phicomm-t1-hack' 
@@ -402,15 +417,15 @@ export const CaseDetail: React.FC<CaseDetailProps> = ({
                 <div className="hero-spec-item">
                   <Link2 size={15} className="spec-icon" />
                   <span className="spec-label">访问形式</span>
-                  {visitUrl.startsWith('http') ? (
+                  {visitUrl.startsWith('http') || visitUrl.startsWith('/go/') ? (
                     <a
                       href={visitUrl}
                       target="_blank"
-                      rel="noopener noreferrer"
+                      rel="nofollow sponsored noopener"
                       className="spec-val spec-link"
                       title={`在新窗口访问 ${visitUrl}`}
                     >
-                      <span>{visitUrl.replace(/^https?:\/\//, '')}</span>
+                      <span>{visitUrl.startsWith('/go/') ? 'https://mg.fonxt.com' : visitUrl.replace(/^https?:\/\//, '')}</span>
                       <ExternalLink size={12} className="inline-ext-icon" />
                     </a>
                   ) : (
@@ -445,7 +460,7 @@ export const CaseDetail: React.FC<CaseDetailProps> = ({
                     <a
                       href={currentCase.trialOffer.linkUrl}
                       target="_blank"
-                      rel="noopener noreferrer"
+                      rel="nofollow sponsored noopener"
                       className="btn-trial-action"
                       title="立即注册体验 MagicGemini"
                     >
@@ -1241,6 +1256,20 @@ export const CaseDetail: React.FC<CaseDetailProps> = ({
                     </div>
                   ))}
                 </div>
+              </section>
+            )}
+
+            {/* =========================================================================
+                3.8 OPTIONAL: Markdown 深度长文与解耦正文 (MARKDOWN DECOUPLED ARTICLE)
+               ========================================================================= */}
+            {currentCase.markdownContent && (
+              <section id="case-markdown-article" className="case-markdown-section">
+                <div className="section-title-bar">
+                  <span className="section-bar-accent" />
+                  <h2 className="section-title-cn">深度技术手记与实战长文</h2>
+                  <span className="section-title-en">DEEP DIVE & TECHNICAL NARRATIVE</span>
+                </div>
+                <CaseMarkdown content={currentCase.markdownContent} />
               </section>
             )}
 

@@ -82,10 +82,42 @@ function initTables(PDO $pdo) {
         `ip` VARCHAR(64) NOT NULL,
         `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+    CREATE TABLE IF NOT EXISTS `fonxt_redirect_links` (
+        `slug` VARCHAR(80) NOT NULL PRIMARY KEY,
+        `target_url` VARCHAR(500) NOT NULL,
+        `title` VARCHAR(150) NOT NULL,
+        `category` VARCHAR(60) NOT NULL DEFAULT 'external',
+        `click_count` INT UNSIGNED NOT NULL DEFAULT 0,
+        `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+    CREATE TABLE IF NOT EXISTS `fonxt_redirect_clicks` (
+        `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        `slug` VARCHAR(80) NOT NULL,
+        `ip` VARCHAR(64) NOT NULL,
+        `referer` VARCHAR(255) NULL,
+        `user_agent` VARCHAR(255) NULL,
+        `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        INDEX `idx_slug_created` (`slug`, `created_at`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     ";
 
     try {
         $pdo->exec($schema);
+
+        // 注入初始种子重定向 Slug (幂等写入)
+        $seedSql = "
+        INSERT IGNORE INTO `fonxt_redirect_links` (`slug`, `target_url`, `title`, `category`) VALUES
+        ('magic-gemini', 'https://mg.fonxt.com', 'MagicGemini 影视级全模态 AI 创作中枢', 'product'),
+        ('t1-zoom-helper', '/downloads/T1ZoomHelper.apk', 'T1ZoomHelper.apk (v3.1) 独立安装包', 'download'),
+        ('t1-fix-zip', '/downloads/斐讯T1_全固件自适应硬解修复工具包.zip', '斐讯T1 全固件自适应硬解修复工具包', 'download'),
+        ('t1-kodi-apk', 'https://mirrors.kodi.tv/releases/android/arm/kodi-21.0-Omega-armeabi-v7a.apk', 'Kodi v21.0 Omega 官方推荐稳定版 APK', 'download'),
+        ('enshan-t1', 'https://www.right.com.cn/forum/thread-8418939-1-1.html', '恩山无线论坛 T1 深度技术原帖', 'community');
+        ";
+        $pdo->exec($seedSql);
+
         $initialized = true;
     } catch (PDOException $e) {
         error_log('[DB Schema Init Error] ' . $e->getMessage());

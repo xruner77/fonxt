@@ -1,6 +1,9 @@
 # robots.txt for https://fonxt.com
 User-agent: *
+Disallow: /go/
+Disallow: /api/
 Allow: /
 
 # Sitemap
 Sitemap: https://fonxt.com/sitemap.xml
+

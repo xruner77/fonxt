@@ -1,0 +1,268 @@
+/* ==========================================================================
+   CASE MARKDOWN CONTENT - STRICT SCOPED SANDBOX STYLES
+   所有选择器必须严格包含 .case-markdown-content 前缀，严禁全局污染！
+   ========================================================================== */
+
+.case-markdown-content {
+  color: var(--text-secondary);
+  font-size: 1.02rem;
+  line-height: 1.85;
+  word-break: break-word;
+  margin-top: 1.5rem;
+}
+
+/* 标题样式 */
+.case-markdown-content .md-heading {
+  color: var(--text-primary);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  position: relative;
+  scroll-margin-top: 100px;
+}
+
+.case-markdown-content .md-heading-2 {
+  font-size: 1.45rem;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.case-markdown-content .md-heading-2 .md-heading-anchor {
+  color: var(--color-blue);
+  font-size: 1.1rem;
+  font-weight: 900;
+  opacity: 0.8;
+}
+
+.case-markdown-content .md-heading-3 {
+  font-size: 1.2rem;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  color: var(--text-primary);
+}
+
+.case-markdown-content .md-heading-3 .md-heading-anchor {
+  color: var(--color-cyan);
+  font-size: 0.95rem;
+  margin-right: 6px;
+  opacity: 0.7;
+}
+
+/* 段落与文本排版 */
+.case-markdown-content p {
+  margin-bottom: 1.25rem;
+  color: var(--text-secondary);
+}
+
+.case-markdown-content strong {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.case-markdown-content em {
+  font-style: italic;
+  color: var(--color-blue);
+}
+
+.case-markdown-content .md-link {
+  color: var(--color-blue);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.case-markdown-content .md-link:hover {
+  color: var(--color-cyan);
+}
+
+/* 列表规范 */
+.case-markdown-content ul,
+.case-markdown-content ol {
+  margin-top: 0.5rem;
+  margin-bottom: 1.5rem;
+  padding-left: 1.5rem;
+}
+
+.case-markdown-content li {
+  margin-bottom: 0.5rem;
+  line-height: 1.75;
+}
+
+.case-markdown-content ul > li {
+  list-style-type: disc;
+}
+
+.case-markdown-content ol > li {
+  list-style-type: decimal;
+}
+
+/* 行内代码 */
+.case-markdown-content :not(pre) > code {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  background-color: rgba(15, 23, 42, 0.06);
+  color: #0284c7;
+  padding: 0.18em 0.45em;
+  border-radius: 6px;
+  border: 1px solid rgba(2, 132, 199, 0.15);
+  font-weight: 600;
+}
+
+/* 终端代码块容器 (Terminal Card) */
+.case-markdown-content .md-terminal-card {
+  margin: 1.5rem 0 2rem 0;
+  background-color: #0b1120;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+}
+
+.case-markdown-content .md-terminal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  background-color: rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.case-markdown-content .md-terminal-dots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.case-markdown-content .md-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.case-markdown-content .md-dot-red {
+  background-color: #ef4444;
+}
+
+.case-markdown-content .md-dot-yellow {
+  background-color: #eab308;
+}
+
+.case-markdown-content .md-dot-green {
+  background-color: #22c55e;
+}
+
+.case-markdown-content .md-terminal-lang {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.case-markdown-content .md-terminal-body {
+  margin: 0;
+  padding: 16px 20px;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: #e2e8f0;
+  background: transparent;
+}
+
+.case-markdown-content .md-terminal-body code {
+  font-family: inherit;
+  color: inherit;
+  background: transparent;
+  padding: 0;
+  border: none;
+}
+
+/* Callout 提示盒 */
+.case-markdown-content .md-callout {
+  margin: 1.5rem 0;
+  padding: 1rem 1.25rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
+}
+
+.case-markdown-content .md-callout-title {
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.case-markdown-content .md-callout-warning {
+  background-color: rgba(234, 88, 12, 0.08);
+  border: 1px solid rgba(234, 88, 12, 0.25);
+  color: #9a3412;
+}
+
+.case-markdown-content .md-callout-warning .md-callout-title {
+  color: #c2410c;
+}
+
+.case-markdown-content .md-callout-tip {
+  background-color: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  color: #065f46;
+}
+
+.case-markdown-content .md-callout-tip .md-callout-title {
+  color: #047857;
+}
+
+.case-markdown-content .md-callout-note {
+  background-color: rgba(37, 99, 235, 0.08);
+  border: 1px solid rgba(37, 99, 235, 0.25);
+  color: #1e40af;
+}
+
+.case-markdown-content .md-callout-note .md-callout-title {
+  color: #1d4ed8;
+}
+
+/* 引用块 */
+.case-markdown-content .md-quote {
+  margin: 1.5rem 0;
+  padding: 0.8rem 1.25rem;
+  border-left: 4px solid var(--color-blue);
+  background-color: var(--bg-glass);
+  border-radius: 0 8px 8px 0;
+  color: var(--text-secondary);
+  font-style: normal;
+}
+
+/* 表格规范 */
+.case-markdown-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.92rem;
+}
+
+.case-markdown-content th,
+.case-markdown-content td {
+  padding: 10px 14px;
+  border: 1px solid var(--border-subtle);
+  text-align: left;
+}
+
+.case-markdown-content th {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.case-markdown-content tr:nth-child(even) {
+  background-color: rgba(15, 23, 42, 0.015);
+}
