@@ -1998,6 +1998,8 @@
   position: sticky;
   top: calc(var(--nav-height, 70px) + 24px);
   z-index: 20;
+  height: fit-content;
+  align-self: start;
 }
 
 .sidebar-toc-sticky-box {
@@ -2857,7 +2859,6 @@
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
-    overflow-x: hidden;
     margin: 0;
     padding: 0;
   }
@@ -2874,7 +2875,6 @@
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
-    overflow-x: hidden;
   }
 
   .sidebar-toc-header,
